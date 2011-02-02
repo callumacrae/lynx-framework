@@ -2,12 +2,17 @@
 
 class CalcController extends Controller
 {
-	public function index()
+	function __contruct()
+	{
+		$this->load('demo');
+	}
+
+	function index()
 	{
 		require($this->view('calc_index'));
 	}
 	
-	public function results()
+	function results()
 	{
 		$answer = $_POST['num1'] + $_POST['num2'];
 		require($this->view('calc_results'));
