@@ -1,30 +1,45 @@
 <?php
-define("VIEW_PATH", __DIR__ . "/lynx/calculator/views");
 
-require_once(__DIR__ . "/lynx/calculator/controllers/HelloController.php");
-require_once(__DIR__ . "/lynx/calculator/controllers/CalcController.php");
+$config = array(
+	'def_path1'	=> 'calc',
+	'def_path2'	=> 'index',
+);
 
-use lynx\controllers\HelloController;
-use lynx\controllers\CalcController;
+class BasicController
+{
+	function load($thing)
+	{
+		return $thing;
+	}
 
-// Request dispatcher
-if ($_SERVER['PATH_INFO'] == "/hello")
-{
-	$controller = new HelloController();
-	$controller->sayHello();
+	function get_view($path)
+	{
+		$path = PATH_VIEW . '/' . $path . '.php';
+		if (!is_readable($path))
+		{
+			trigger_error('Failed to get view: could not read path ' . $path, E_USER_ERROR);
+			return 0;
+		}
+		include($path);
+		return 1;
+	}
 }
-else if ($_SERVER['PATH_INFO'] == "/calc")
+
+define('PATH_VIEW', __DIR__ . '/lynx/views');
+define('PATH_CONTROLLER', __DIR__ . '/lynx/controllers');
+
+$path_info = explode("/", $_SERVER['PATH_INFO']);
+$path_info[1] = isset($path_info[1]) ? $path_info[1] : $config['def_path1'];
+$path_info[2] = isset($path_info[2]) ? $path_info[2] : $config['def_path2'];
+
+if (!is_readable(PATH_CONTROLLER . '/' .$path_info[1] . '.php'))
 {
-	$controller = new CalcController();
-	$controller->index();
+	trigger_error('Could not read controller file "' . $path_info[1] . '.php"', E_USER_ERROR);
 }
-else if ($_SERVER['PATH_INFO'] == "/calc/results")
-{
-	$controller = new CalcController();
-	$controller->results();
-}
-else
-{
-	echo "You must choose a page!";
-}
+
+require_once(PATH_CONTROLLER . '/' . $path_info[1] . '.php');
+
+$controller = new Controller();
+$controller->$path_info[2]();
+
 ?>
