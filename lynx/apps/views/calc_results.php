@@ -4,6 +4,6 @@
                 <title>My Site: Calculator Results</title>
         <head>
         <body>
-                The answer is <?php global $answer; echo $answer; ?>!
+                The answer is <?php echo $answer; ?>!
         </body>
 </html>
