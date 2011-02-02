@@ -5,7 +5,7 @@ $config = array(
 	'def_path2'	=> 'index',
 );
 
-class BasicController
+class Controller
 {
 	function load($thing)
 	{
@@ -39,7 +39,8 @@ if (!is_readable(PATH_CONTROLLER . '/' .$path_info[1] . '.php'))
 
 require_once(PATH_CONTROLLER . '/' . $path_info[1] . '.php');
 
-$controller = new Controller();
+$controller = $path_info[1] . 'Controller';
+$controller = new $controller;
 $controller->$path_info[2]();
 
 ?>

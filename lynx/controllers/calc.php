@@ -1,6 +1,6 @@
 <?php
 
-class Controller extends BasicController
+class CalcController extends Controller
 {
 	public function index()
 	{
