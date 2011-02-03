@@ -1,8 +1,8 @@
 <?php
 
-class Demo
+class Demo extends Plugin
 {
-	function example($to, $subject, $body)
+	function example()
 	{
 		echo 'Example! Well, it worked...';
 		return true;

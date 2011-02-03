@@ -20,7 +20,7 @@ class Controller
 
 		require($path);
 
-		$this->$module = new $module;
+		$this->$module = new $module($module);
 		return 1;
 	}
 
