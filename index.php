@@ -1,14 +1,12 @@
 <?php
 
-
 error_reporting(-1);
-
-
-require_once('lynx/includes/includes.php');
 
 define('PATH_VIEW', __DIR__ . '/lynx/apps/views');
 define('PATH_CONTROLLER', __DIR__ . '/lynx/apps/controllers');
 define('PATH_INDEX', __DIR__);
+
+require_once('lynx/includes/includes.php');
 
 if (isset($_SERVER['PATH_INFO']))
 {
