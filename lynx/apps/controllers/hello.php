@@ -1,10 +1,11 @@
 <?php
 
-class HelloController
+class HelloController extends Controller
 {
 	public function index()
 	{
-		echo 'Hello, World!';
+		$this->load('lang');
+		echo $this->lang->get('hello_world');
 	}
 }
 
