@@ -2,6 +2,8 @@
 
 class Controller
 {
+	private $modules = array();
+
 	function load($module)
 	{
 		$path = PATH_INDEX . '/lynx/plugins/' . $module . '/';
@@ -25,6 +27,8 @@ class Controller
 		{
 			$this->$module->lynx_contruct();
 		}
+
+		$this->modules[] = $module;
 		return 1;
 	}
 
@@ -37,5 +41,10 @@ class Controller
 			return false;
 		}
 		return $path;
+	}
+
+	function exists($module)
+	{
+		return (isset($this->modules[$module]) && $this->modules[$module]);
 	}
 }
