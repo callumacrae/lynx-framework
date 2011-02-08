@@ -28,7 +28,7 @@ class Controller
 			$this->$module->lynx_contruct();
 		}
 
-		$this->modules[] = $module;
+		$this->modules[$module] = true;
 		return 1;
 	}
 
