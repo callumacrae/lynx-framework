@@ -2,7 +2,7 @@
 
 class Controller
 {
-	private $modules = array();
+	protected $modules = array();
 
 	function load($module)
 	{
