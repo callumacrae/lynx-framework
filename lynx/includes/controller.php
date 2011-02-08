@@ -2,7 +2,10 @@
 
 class Controller
 {
-	protected $modules = array();
+	function __construct()
+	{
+		$this->hooks = new Hooks;
+	}
 
 	function load($module)
 	{
@@ -28,7 +31,7 @@ class Controller
 			$this->$module->lynx_contruct();
 		}
 
-		$this->modules[$module] = true;
+		$this->hooks->modules[$module] = true;
 		return 1;
 	}
 
