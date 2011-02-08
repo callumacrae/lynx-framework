@@ -4,7 +4,6 @@ class CalcController extends Controller
 {
 	function index()
 	{
-		$this->load('demo');
 		require($this->view('calc_index'));
 	}
 	
