@@ -1,6 +1,8 @@
-The lynx framework is currently under development. It is predominantly written by Callum Macrae, the admin of lynxphp. If you feel like contributing to the development, feel free - just send me an email / pull request over github.
+The lynx framework is a very simple and lightweight framework which aims to be good for any sort of application, small or big. It is written in PHP.
 
-It is still extremely early on in development, we expect that it will not be complete for quite a while.
+It is currently under development. It is predominantly written by Callum Macrae, the admin of lynxphp, but if you feel like contributing to the development, feel free; just send me an email or pull request over github.
+
+The framework is still extremely early on in development, although we expect that it will be complete (or at least in beta) by early summer 2010.
 
 The lynx framework is released under the Creative Commons Attribution-ShareAlike license:
 http://creativecommons.org/licenses/by-sa/3.0/
