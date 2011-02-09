@@ -26,10 +26,6 @@ class Controller
 		require($path);
 
 		$this->$module = new $module($module);
-		if (method_exists($this->$module, 'lynx_construct'))
-		{
-			$this->$module->lynx_construct();
-		}
 
 		$this->hooks->modules[$module] = true;
 		return 1;
