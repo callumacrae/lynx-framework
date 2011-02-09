@@ -14,9 +14,9 @@ abstract class Plugin
 		include($path);
 		$this->config = new Config($config, $module);
 
-		if (method_exists($this->$module, 'lynx_construct'))
+		if (method_exists($this, 'lynx_construct'))
 		{
-			$this->$module->lynx_construct();
+			$this->lynx_construct();
 		}
 
 		return 1;
