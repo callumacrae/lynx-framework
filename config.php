@@ -1,6 +1,7 @@
 <?php
 
 $config = array(
-	'def_path1'	=> 'calc',
-	'def_path2'	=> 'index',
+	'd_controller'	=> 'calc', // default controller
+	'd_function'	=> 'index', // default function
+	'hooks_enable'	=> 'true',
 );
