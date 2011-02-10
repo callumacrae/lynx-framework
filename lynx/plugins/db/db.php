@@ -57,4 +57,25 @@ class Db extends Plugin
 		$statement->execute($where_ary);
 		return $statement;
 	}
+
+	function insert($insert)
+	{
+		$return = array();
+		foreach ($insert as $table => $values)
+		{
+			$columns= implode(', ', array_keys($values));
+
+			for ($i = 1, $q_values = '?', $count = count($values); $i < $count; $i++)
+			{
+				$q_values .= ', ?';
+			}
+
+			$sql = "INSERT INTO " . $table . " ($columns) VALUES ($q_values);";
+
+			$statement = $this->conn->prepare($sql);
+			$statement->execute(array_values($values));
+			$return[] = $statement;
+		}
+		return $return;
+	}
 }
