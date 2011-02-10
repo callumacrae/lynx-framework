@@ -6,6 +6,16 @@ class CalcController extends Controller
 	{
 		require($this->view('calc_index'));
 	}
+
+	function db_test()
+	{
+		$this->load('db');
+		$this->db->insert(array(
+			'visits' => array(
+				'time'	=> time(),
+			),
+		));
+	}
 	
 	function results()
 	{

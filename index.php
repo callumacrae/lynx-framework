@@ -24,7 +24,7 @@ if (!is_readable(PATH_CONTROLLER . '/' .$path_info[1] . '.php'))
 	trigger_error('Could not read controller file "' . $path_info[1] . '.php"', E_USER_ERROR);
 }
 
-require_once(PATH_CONTROLLER . '/' . $path_info[1] . '.php');
+include(PATH_CONTROLLER . '/' . $path_info[1] . '.php');
 
 $controller = $path_info[1] . 'Controller';
 $controller = new $controller;
