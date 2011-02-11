@@ -78,4 +78,65 @@ class Db extends Plugin
 		}
 		return $return;
 	}
+
+	function select_row($select)
+	{
+		$select['LIMIT'] = '0, 1';
+
+		$statement = $this->select($select);
+		while ($result = $statement->fetch())
+		{
+			return $result;
+		}
+		return false;
+	}
+
+	function update($update)
+	{
+		$sql = 'UPDATE ' . $update['TABLE'] . ' SET ';
+
+		if (is_array($update['VALUES']))
+		{
+			$i = 0;
+			foreach(array_keys($update['VALUES']) as $value)
+			{
+				$sql .= $value . ' = ?';
+				if ($i < count($update['VALUES'])-1)
+				{
+					$sql .= ', ';
+				}
+				$i++;
+			}
+			$update_ary = array_values($update['VALUES'];
+		}
+		else
+		{
+			$sql .= $update['VALUES'] . ' ';
+		}
+
+		$sql .= ' WHERE ';
+
+		if (is_array($update['WHERE']))
+		{
+			$i = 0;
+			foreach(array_keys($update['WHERE']) as)
+			{
+				$sql .= $value . ' = ?';
+				if ($i < count($update['WHERE'])-1)
+				{
+					$sql .= ', ';
+				}
+				$i++;
+			}
+			$update_ary[] = array_values($update['VALUES']);
+		}
+		else
+		{
+			$sql .= $update['WHERE'] . ' ';
+		}
+
+		$statement = $this->db->prepare($sql);
+		$statement->execute($update_ary);
+		return $statement;
+	}
 }
