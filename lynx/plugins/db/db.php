@@ -107,7 +107,7 @@ class Db extends Plugin
 				}
 				$i++;
 			}
-			$update_ary = array_values($update['VALUES'];
+			$update_ary = array_values($update['VALUES']);
 		}
 		else
 		{
@@ -119,7 +119,7 @@ class Db extends Plugin
 		if (is_array($update['WHERE']))
 		{
 			$i = 0;
-			foreach(array_keys($update['WHERE']) as)
+			foreach(array_keys($update['WHERE']) as $value)
 			{
 				$sql .= $value . ' = ?';
 				if ($i < count($update['WHERE'])-1)
