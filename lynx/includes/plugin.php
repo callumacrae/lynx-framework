@@ -21,4 +21,10 @@ abstract class Plugin
 
 		return 1;
 	}
+
+	function get_plugin($plugin)
+	{
+		$controller =& $GLOBALS['controller'];
+		return $controller->load($plugin);
+	}
 }

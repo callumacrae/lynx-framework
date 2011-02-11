@@ -9,6 +9,12 @@ class Controller
 
 	function load($module)
 	{
+		if (isset($this->hooks->modules[$module]))
+		{
+			$module =& $this->$module;
+			return $module;
+		}
+
 		$path = PATH_INDEX . '/lynx/plugins/' . $module . '/';
 		if (!is_dir($path))
 		{
