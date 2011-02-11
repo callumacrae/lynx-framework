@@ -139,4 +139,38 @@ class Db extends Plugin
 		$statement->execute($update_ary);
 		return $statement;
 	}
+
+	function delete($delete)
+	{
+		$sql = 'DELETE FROM ' . $delete['FROM'] . ' WHERE ';
+
+		if (is_array($delete['WHERE']))
+		{
+			$i=0;
+			foreach(array_keys($delete['WHERE']) as $value)
+			{
+				$sql .= $value . ' = ?';
+				if ($i<count($delete['WHERE'])-1) $sql .= ', ';
+				$i++;
+			}
+			$values_ary = array_values($delete['WHERE']);
+
+			echo $sql . print_r($values_ary);
+			$statement = $this->db->prepare($sql);
+			$statement->execute($values_ary);
+			return $statement;
+		}
+		$sql .= $delete['WHERE'];
+		return $this->sql($sql);
+	}
+
+	function clean($table)
+	{
+		$this->sql('DELETE FROM ' . $table);
+	}
+
+	function drop($table)
+	{
+		$this->sql('DROP TABLE ' . $table);
+	}
 }
