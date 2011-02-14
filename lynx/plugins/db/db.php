@@ -40,7 +40,7 @@ class Db extends Plugin
 		if (is_array($select['WHERE']))
 		{
 			$sql .= "WHERE ";
-			foreach ($select['WHERE'] as $where => $squals)
+			foreach ($select['WHERE'] as $where => $equals)
 			{
 				$sql .= "$where = ? AND ";
 				$where_ary[] = $equals;
