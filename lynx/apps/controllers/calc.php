@@ -4,7 +4,9 @@ class CalcController extends Controller
 {
 	function index()
 	{
+		$this->load('db');
 		$this->load('auth');
+		$this->auth->check_login('callum', 'test');
 		require($this->view('calc_index'));
 	}
 
