@@ -13,10 +13,16 @@ class Auth extends Plugin
 			'FROM'	=> $this->config['table'],
 			'WHERE'	=> array(
 				'USER'	=> $user,
-				'pass'	=> $pass,
+				'pass'	=> $this->hash($pass),
 			),
 		));
 
-		print_r($user);
+		return (bool) $user->fetch();
+	}
+
+	function hash($str)
+	{
+		//may put something more advanced in later
+		return md5($str);
 	}
 }
