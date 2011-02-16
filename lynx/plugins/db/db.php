@@ -37,14 +37,15 @@ class Db extends Plugin
 			$sql .= $select['FROM'] . " ";
 		}
 
-		if (is_array($select['WHERE']))
+		$where_ary = null;
+		if (isset($select['WHERE']) && is_array($select['WHERE']))
 		{
 			$sql .= "WHERE ";
-			foreach ($select['WHERE'] as $where => $equals)
+			foreach (array_keys($select['WHERE']) as $where)
 			{
-				$sql .= "$where = ? AND ";
-				$where_ary[] = $equals;
+				$where_ary[] = "$where = ?";
 			}
+			$sql .= implode(' AND ', $where_ary);
 		}
 		else if (isset($select['WHERE']))
 		{
@@ -54,7 +55,7 @@ class Db extends Plugin
 		$sql .= (isset($select['ORDER']) ? "ORDER BY " . $select['ORDER'] . " " : "") . (isset($select['LIMIT']) ? "LIMIT " . $select['LIMIT'] . " " : "");
 
 		$statement = $this->conn->prepare($sql);
-		$statement->execute($where_ary);
+		$statement->execute(is_array($select['WHERE']) ? array_values($select['WHERE']) : null);
 		return $statement;
 	}
 
