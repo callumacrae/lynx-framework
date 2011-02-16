@@ -1,5 +1,7 @@
 <?php
 
+session_start();
+
 error_reporting(-1);
 
 define('PATH_VIEW', __DIR__ . '/lynx/apps/views');
