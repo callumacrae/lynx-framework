@@ -2,27 +2,127 @@
 
 class Auth extends Plugin
 {
+	private $failed = false;
+	private $id;
+	public $logged;
+
 	function lynx_construct()
 	{
 		$this->db = $this->get_plugin('db');
+		$this->cookie = $this->get_plugin('cookies');
+		if (isset($_SESSION['logged']))
+		{ 
+			$result = $this->db->select(array(
+				'FROM'	=> 'member',
+				'WHERE'	=> array(
+					'user'		=> $_SESSION['username'],
+					'cookie'	=> $_SESSION['cookie'],
+					'session'	=> session_id(),
+					'ip'		=> $_SERVER['REMOTE_ADDR'],
+				),
+			));
+			if (is_object($result))
+			{ 
+				$this->_setSession($result, false, false); 
+			}
+			else
+			{ 
+				$this->_logout(); 
+			} 
+		}
+		else if (isset($_COOKIE[$this->config['cookie_name']]))
+		{
+			$this->_checkRemembered($_COOKIE[$this->config['cookie_name']]); 
+		} 
 	}
 
-	function check_login($user, $pass)
+	function check_login($user, $pass, $remember)
 	{
 		$user = $this->db->select(array(
 			'FROM'	=> $this->config['table'],
 			'WHERE'	=> array(
-				'USER'	=> $user,
+				'user'	=> $user,
 				'pass'	=> $this->hash($pass),
 			),
 		));
 
-		return (bool) $user->fetch();
+		$result = $user->fetchObject();
+
+		if (is_object($result))
+		{
+			$this->set_session($result, $remember);
+			return true;
+		}
+		else
+		{
+			$this->failed = true;
+			$this->_logout();
+			return false;
+		}
 	}
 
 	function hash($str)
 	{
 		//may put something more advanced in later
 		return md5($str);
+	}
+
+	function updateCookie($cookie, $save)
+	{
+		$_SESSION['cookie'] = $cookie; 
+		if ($save)
+		{ 
+			$cookie = serialize(array($_SESSION['username'], $cookie)); 
+			$cookie_name = $this->config['cookie_name'];
+			$this->cookie->$cookie_name = $cookie;
+		} 
+	}
+
+	function _checkRemembered($cookie)
+	{ 
+		list($username, $cookie) = unserialize($cookie); 
+		if (!$username or !$cookie) return; 
+		$result = $this->db->select(array(
+			'FROM'	=> $this->config['table'],
+			'WHERE'	=> array(
+				'user'	=> $username,
+				'cookie'=> $cookie,
+			),
+		));
+		if (is_object($result))
+		{ 
+			$this->set_session($result, true);
+		} 
+	}
+
+	function set_session(&$result, $remember, $init = true)
+	{
+		$this->id = $result->id;
+		$_SESSION['uid'] = $this->id;
+		$_SESSION['username'] = $result->user;
+		$_SESSION['cookie'] = $result->cookie;
+		$_SESSION['logged'] = true;
+		if ($remember)
+		{
+			$session = session_id();
+			$ip = $_SERVER['REMOTE_ADDR'];
+
+			$this->db->update(array(
+				'TABLE'		=> $this->config['table'],
+				'VALUES'	=> array(
+					'session'	=> $session,
+					'ip'		=> $ip,
+				),
+				'WHERE'		=> array(
+					'id'		=> $this->id,
+				),
+			));
+		}
+	}
+
+	function _logout()
+	{
+		echo 'HELLO BAR';
+		return true;
 	}
 }
