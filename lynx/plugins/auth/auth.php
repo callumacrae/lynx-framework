@@ -3,8 +3,9 @@
 class Auth extends Plugin
 {
 	private $failed = false;
-	private $id;
+	public $id;
 	public $logged;
+	public $info;
 
 	function lynx_construct()
 	{
@@ -21,9 +22,10 @@ class Auth extends Plugin
 					'ip'		=> $_SERVER['REMOTE_ADDR'],
 				),
 			));
+			$result = $result->fetchObject();
 			if (is_object($result))
 			{ 
-				$this->_setSession($result, false, false); 
+				$this->set_session($result, false, false); 
 			}
 			else
 			{ 
@@ -32,7 +34,7 @@ class Auth extends Plugin
 		}
 		else if (isset($_COOKIE[$this->config['cookie_name']]))
 		{
-			$this->_checkRemembered($_COOKIE[$this->config['cookie_name']]); 
+			$this->_checkRemembered($this->cookie->{$this->config['cookie_name']}); 
 		} 
 	}
 
@@ -97,6 +99,7 @@ class Auth extends Plugin
 
 	function set_session(&$result, $remember, $init = true)
 	{
+		$this->info = $result;
 		$this->id = $result->id;
 		$_SESSION['uid'] = $this->id;
 		$_SESSION['username'] = $result->user;
@@ -116,6 +119,7 @@ class Auth extends Plugin
 				'VALUES'	=> array(
 					'session'	=> $session,
 					'ip'		=> $ip,
+					'cookie'	=> $_SESSION['cookie'],
 				),
 				'WHERE'		=> array(
 					'id'		=> $this->id,
@@ -126,7 +130,7 @@ class Auth extends Plugin
 
 	function _logout()
 	{
-		echo 'HELLO BAR';
-		return true;
+		echo 'Debug: _logout() called';
+		return session_destroy();
 	}
 }
