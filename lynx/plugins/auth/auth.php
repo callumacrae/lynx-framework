@@ -67,7 +67,7 @@ class Auth extends Plugin
 		return md5($str);
 	}
 
-	function updateCookie($cookie, $save)
+	function update_cookie($cookie, $save)
 	{
 		$_SESSION['cookie'] = $cookie; 
 		if ($save)
@@ -103,6 +103,10 @@ class Auth extends Plugin
 		$_SESSION['cookie'] = $result->cookie;
 		$_SESSION['logged'] = true;
 		if ($remember)
+		{
+			$this->update_cookie($result->cookie, true);
+		}
+		if ($init)
 		{
 			$session = session_id();
 			$ip = $_SERVER['REMOTE_ADDR'];
