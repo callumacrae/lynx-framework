@@ -129,14 +129,14 @@ class Db extends Plugin
 				}
 				$i++;
 			}
-			$update_ary[] = array_values($update['VALUES']);
+			$update_ary = array_merge($update_ary, array_values($update['WHERE']));
 		}
 		else
 		{
 			$sql .= $update['WHERE'] . ' ';
 		}
 
-		$statement = $this->db->prepare($sql);
+		$statement = $this->conn->prepare($sql);
 		$statement->execute($update_ary);
 		return $statement;
 	}
