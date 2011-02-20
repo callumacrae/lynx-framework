@@ -20,7 +20,7 @@ class Cookies extends Plugin
 
 	function __set($cookie, $value)
 	{
-		$this->cookie[$cookie] = $value;
+		$this->cookies[$cookie] = $value;
 		return setcookie($cookie, $value, time() + $this->config['d_expire']);
 	}
 
