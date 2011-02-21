@@ -7,38 +7,53 @@ class Auth extends Plugin
 	public $logged;
 	public $info;
 
-	function lynx_construct()
+	public function lynx_construct()
 	{
 		$this->db = $this->get_plugin('db');
 		$this->cookie = $this->get_plugin('cookies');
 		if (isset($_SESSION['logged']))
 		{ 
 			$result = $this->db->select(array(
-				'FROM'	=> 'member',
+				'FROM'	=> $this->config['table'],
 				'WHERE'	=> array(
-					'user'		=> $_SESSION['username'],
+					'id'		=> $_SESSION['uid'],
 					'cookie'	=> $_SESSION['cookie'],
 					'session'	=> session_id(),
 					'ip'		=> $_SERVER['REMOTE_ADDR'],
 				),
 			));
 			$result = $result->fetchObject();
+
 			if (is_object($result))
 			{ 
 				$this->set_session($result, false, false); 
 			}
 			else
 			{ 
-				$this->_logout(); 
+				$this->logout(); 
 			} 
 		}
-		else if (isset($_COOKIE[$this->config['cookie_name']]))
+		else if (isset($this->cookie->{$this->config['cookie_name']}))
 		{
-			$this->_checkRemembered($this->cookie->{$this->config['cookie_name']}); 
+			$cookie = $this->cookie->{$this->config['cookie_name']};
+			list($username, $cookie) = unserialize($cookie); 
+			if (!$username or !$cookie) return; 
+			$result = $this->db->select(array(
+				'FROM'	=> $this->config['table'],
+				'WHERE'	=> array(
+					'user'	=> $username,
+					'cookie'=> $cookie,
+				),
+			));
+			if (is_object($result))
+			{ 
+				$result = $result->fetchObject();
+				$this->set_session($result, true);
+			} 
 		} 
 	}
 
-	function check_login($user, $pass, $remember)
+	public function check_login($user, $pass, $remember)
 	{
 		$user = $this->db->select(array(
 			'FROM'	=> $this->config['table'],
@@ -58,7 +73,7 @@ class Auth extends Plugin
 		else
 		{
 			$this->failed = true;
-			$this->_logout();
+			$this->logout();
 			return false;
 		}
 	}
@@ -69,7 +84,7 @@ class Auth extends Plugin
 		return md5($str);
 	}
 
-	function update_cookie($cookie, $save)
+	private function update_cookie($cookie, $save)
 	{
 		$_SESSION['cookie'] = $cookie; 
 		if ($save)
@@ -80,24 +95,7 @@ class Auth extends Plugin
 		} 
 	}
 
-	function _checkRemembered($cookie)
-	{ 
-		list($username, $cookie) = unserialize($cookie); 
-		if (!$username or !$cookie) return; 
-		$result = $this->db->select(array(
-			'FROM'	=> $this->config['table'],
-			'WHERE'	=> array(
-				'user'	=> $username,
-				'cookie'=> $cookie,
-			),
-		));
-		if (is_object($result))
-		{ 
-			$this->set_session($result, true);
-		} 
-	}
-
-	function set_session(&$result, $remember, $init = true)
+	private function set_session($result, $remember, $init = true)
 	{
 		$this->info = $result;
 		$this->id = $result->id;
@@ -128,9 +126,20 @@ class Auth extends Plugin
 		}
 	}
 
-	function _logout()
+	public function logout()
 	{
-		echo 'Debug: _logout() called';
-		return session_destroy();
+		session_destroy();
+		$this->db->update(array(
+			'TABLE'		=> $this->config['table'],
+			'VALUES'	=> array(
+				'session'	=> null,
+			),
+			'WHERE'		=> array(
+				'id'		=> $this->id,
+			),
+		));
+		unset($this->cookie->{$this->config['cookie_name']});
+		unset($this->info);
+		return true;
 	}
 }
