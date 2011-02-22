@@ -68,7 +68,7 @@ class Auth extends Plugin
 
 		if (is_object($result))
 		{
-			$this->set_session($result, $remember);
+			$this->set_session($result, $remember, true);
 			return true;
 		}
 		else
@@ -81,6 +81,7 @@ class Auth extends Plugin
 
 	private function set_session($result, $remember, $init = true)
 	{
+		$this->logged = true;
 		$this->info = $result;
 		$this->id = $result->id;
 		$_SESSION['uid'] = $this->id;
