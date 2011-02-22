@@ -54,7 +54,7 @@ class Auth extends Plugin
 		} 
 	}
 
-	public function check_login($user, $pass, $remember)
+	public function login($user, $pass, $remember)
 	{
 		$user = $this->db->select(array(
 			'FROM'	=> $this->config['table'],
