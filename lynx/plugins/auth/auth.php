@@ -11,6 +11,7 @@ class Auth extends Plugin
 	{
 		$this->db = $this->get_plugin('db');
 		$this->cookie = $this->get_plugin('cookies');
+		$this->hash = $this->get_plugin('hash');
 		if (isset($_SESSION['logged']))
 		{ 
 			$result = $this->db->select(array(
@@ -59,7 +60,7 @@ class Auth extends Plugin
 			'FROM'	=> $this->config['table'],
 			'WHERE'	=> array(
 				'user'	=> $user,
-				'pass'	=> $this->hash($pass),
+				'pass'	=> $this->hash->pbkdf2($pass, $user),
 			),
 		));
 
@@ -76,12 +77,6 @@ class Auth extends Plugin
 			$this->logout();
 			return false;
 		}
-	}
-
-	function hash($str)
-	{
-		//may put something more advanced in later
-		return md5($str);
 	}
 
 	private function update_cookie($cookie, $save)
