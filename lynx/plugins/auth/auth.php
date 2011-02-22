@@ -79,17 +79,6 @@ class Auth extends Plugin
 		}
 	}
 
-	private function update_cookie($cookie, $save)
-	{
-		$_SESSION['cookie'] = $cookie; 
-		if ($save)
-		{ 
-			$cookie = serialize(array($_SESSION['username'], $cookie)); 
-			$cookie_name = $this->config['cookie_name'];
-			$this->cookie->$cookie_name = $cookie;
-		} 
-	}
-
 	private function set_session($result, $remember, $init = true)
 	{
 		$this->info = $result;
@@ -100,18 +89,16 @@ class Auth extends Plugin
 		$_SESSION['logged'] = true;
 		if ($remember)
 		{
-			$this->update_cookie($result->cookie, true);
+			$cookie = serialize(array($_SESSION['username'], $result->cookie));
+			$this->cookie->{$this->config['cookie_name']} = $cookie;
 		}
 		if ($init)
 		{
-			$session = session_id();
-			$ip = $_SERVER['REMOTE_ADDR'];
-
 			$this->db->update(array(
 				'TABLE'		=> $this->config['table'],
 				'VALUES'	=> array(
-					'session'	=> $session,
-					'ip'		=> $ip,
+					'session'	=> session_id(),
+					'ip'		=> $_SERVER['REMOTE_ADDR'],
 					'cookie'	=> $_SESSION['cookie'],
 				),
 				'WHERE'		=> array(
