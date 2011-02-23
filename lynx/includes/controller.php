@@ -12,7 +12,7 @@ class Controller
 		$this->hooks = new Hooks;
 	}
 
-	public function load($module)
+	public function load($module, $plugin = false)
 	{
 		if (isset($this->hooks->modules[$module]))
 		{
@@ -39,7 +39,13 @@ class Controller
 		$this->$module = new $module($module);
 
 		$this->hooks->modules[$module] = true;
-		return 1;
+
+		if ($plugin)
+		{
+			$module =& $this->$module;
+			return $module;
+		}
+		return true;
 	}
 
 	public function view($path)
@@ -51,10 +57,5 @@ class Controller
 			return false;
 		}
 		return $path;
-	}
-
-	public function exists($module)
-	{
-		return (isset($this->modules[$module]) && $this->modules[$module]);
 	}
 }
