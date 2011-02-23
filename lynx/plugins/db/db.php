@@ -24,7 +24,7 @@ class Db extends Plugin
 	{
 		if (!isset($select['FROM']))
 		{
-			trigger_error("FROM not set");
+			trigger_error('FROM not set');
 			return false;
 		}
 
@@ -39,25 +39,25 @@ class Db extends Plugin
 		}
 		else
 		{
-			$sql .= $select['FROM'] . " ";
+			$sql .= $select['FROM'] . ' ';
 		}
 
 		$where_ary = null;
 		if (isset($select['WHERE']) && is_array($select['WHERE']))
 		{
-			$sql .= "WHERE ";
+			$sql .= 'WHERE ';
 			foreach (array_keys($select['WHERE']) as $where)
 			{
-				$where_ary[] = "$where = ?";
+				$where_ary[] = $where . ' = ?';
 			}
 			$sql .= implode(' AND ', $where_ary);
 		}
 		else if (isset($select['WHERE']))
 		{
-			$sql .= "WHERE " . $select['WHERE'] . " ";
+			$sql .= 'WHERE ' . $select['WHERE'] . ' ';
 		}
 
-		$sql .= (isset($select['ORDER']) ? "ORDER BY " . $select['ORDER'] . " " : "") . (isset($select['LIMIT']) ? "LIMIT " . $select['LIMIT'] . " " : "");
+		$sql .= (isset($select['ORDER']) ? 'ORDER BY ' . $select['ORDER'] . ' ' : null) . (isset($select['LIMIT']) ? 'LIMIT ' . $select['LIMIT'] . ' ' : null);
 
 		$statement = $this->conn->prepare($sql);
 		$statement->execute(is_array($select['WHERE']) ? array_values($select['WHERE']) : null);
@@ -76,7 +76,7 @@ class Db extends Plugin
 				$q_values .= ', ?';
 			}
 
-			$sql = "INSERT INTO " . $table . " ($columns) VALUES ($q_values);";
+			$sql = 'INSERT INTO ' . $table . " ($columns) VALUES ($q_values);";
 
 			$statement = $this->conn->prepare($sql);
 			$statement->execute(array_values($values));
