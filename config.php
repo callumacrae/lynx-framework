@@ -6,7 +6,7 @@ if (!IN_LYNX)
 }
 
 $config = array(
-	'd_controller'	=> 'calc', // default controller
+	'd_controller'	=> 'home', // default controller
 	'd_function'	=> 'index', // default function
 	'hooks_enable'	=> true,
 	'debug'		=> true, //enable debug mode

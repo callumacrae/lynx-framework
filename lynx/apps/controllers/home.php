@@ -5,12 +5,12 @@ if (!IN_LYNX)
         exit;
 }
 
-class CalcController extends Controller
+class HomeController extends Controller
 {
 	function index()
 	{
-		$this->load('hash');
 		$this->load('cookies');
+		$this->load('hash');
 		$this->load('db');
 		$this->load('auth');
 		if (!$this->auth->logged)
@@ -24,12 +24,6 @@ class CalcController extends Controller
 				echo 'failed to log in';
 			}
 		}
-		require($this->view('calc_index'));
-	}
-
-	function results()
-	{
-		$answer = $_POST['num1'] + $_POST['num2'];
-		require($this->view('calc_results'));
+		require($this->view('home_body'));
 	}
 }
