@@ -1,6 +1,6 @@
-The lynx framework is a very simple and lightweight framework which aims to be good for any sort of application, small or big. It is written in PHP.
+The lynx framework is a very simple and lightweight framework designed for making social networks out of. It will be able to handle any size site, and is written with speed, security and resource usage in mind. It is written in PHP, and utilises the MVC architectural pattern.
 
-It is currently under development. It is predominantly written by Callum Macrae, the admin of lynxphp, but if you feel like contributing to the development, feel free; just send me an email or pull request over github.
+It is currently fairly early on in development. It is predominantly written by Callum Macrae, the admin of lynxphp, but if you feel like contributing to the development, feel free; just send me an email or pull request over github.
 
 The framework is still extremely early on in development, although we expect that it will be complete (or at least in beta) by early summer 2010.
 
