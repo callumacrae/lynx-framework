@@ -1,5 +1,10 @@
 <?php
 
+if (!IN_LYNX)
+{
+        exit;
+}
+
 abstract class Plugin
 {
 	public $config = array();

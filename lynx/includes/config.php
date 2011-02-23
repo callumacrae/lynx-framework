@@ -1,5 +1,10 @@
 <?php
 
+if (!IN_LYNX)
+{
+        exit;
+}
+
 class Config implements arrayaccess
 {
     private $container = array();
@@ -53,5 +58,3 @@ class Config implements arrayaccess
     	}
     }
 }
-
-?>

@@ -1,5 +1,10 @@
 <?php
 
+if (!IN_LYNX)
+{
+        exit;
+}
+
 class CalcController extends Controller
 {
 	function index()
@@ -28,5 +33,3 @@ class CalcController extends Controller
 		require($this->view('calc_results'));
 	}
 }
-
-?>

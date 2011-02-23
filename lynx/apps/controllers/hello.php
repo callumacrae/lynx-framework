@@ -1,5 +1,10 @@
 <?php
 
+if (!IN_LYNX)
+{
+        exit;
+}
+
 class HelloController extends Controller
 {
 	public function index()
@@ -8,5 +13,3 @@ class HelloController extends Controller
 		echo $this->lang->get('hello_world');
 	}
 }
-
-?>

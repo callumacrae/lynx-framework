@@ -1,5 +1,10 @@
 <?php
 
+if (!IN_LYNX)
+{
+        exit;
+}
+
 class Auth extends Plugin
 {
 	private $failed = false;

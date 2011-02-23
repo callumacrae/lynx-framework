@@ -1,0 +1,17 @@
+Helpers:
+
+Turn the cookie plugin into a helper
+Create a session helper
+
+
+Plugins:
+
+News feed
+CAPTCHA (with ability to easily add new)
+Template system
+User Agent
+
+
+Write some documentation
+Remove all closing PHP tags
+Comment stuff!
