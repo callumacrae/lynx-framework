@@ -9,18 +9,18 @@ class Db extends Plugin
 {
 	private $conn;
 
-	function lynx_construct()
+	public function lynx_construct()
 	{
 		$dsn = 'mysql:host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';dbname=' . $this->config['db'];
 		$this->conn = new PDO($dsn, $this->config['user'], $this->config['pass']);
 	}
 
-	function sql($sql)
+	public function sql($sql)
 	{
 		return $this->conn->query($sql);
 	}
 
-	function select($select)
+	public function select($select)
 	{
 		if (!isset($select['FROM']))
 		{
@@ -64,7 +64,7 @@ class Db extends Plugin
 		return $statement;
 	}
 
-	function insert($insert)
+	public function insert($insert)
 	{
 		$return = array();
 		foreach ($insert as $table => $values)
@@ -85,7 +85,7 @@ class Db extends Plugin
 		return $return;
 	}
 
-	function select_row($select)
+	public function select_row($select)
 	{
 		$select['LIMIT'] = '0, 1';
 
@@ -97,7 +97,7 @@ class Db extends Plugin
 		return false;
 	}
 
-	function update($update)
+	public function update($update)
 	{
 		$sql = 'UPDATE ' . $update['TABLE'] . ' SET ';
 
@@ -146,7 +146,7 @@ class Db extends Plugin
 		return $statement;
 	}
 
-	function delete($delete)
+	public function delete($delete)
 	{
 		$sql = 'DELETE FROM ' . $delete['FROM'] . ' WHERE ';
 
@@ -170,12 +170,12 @@ class Db extends Plugin
 		return $this->sql($sql);
 	}
 
-	function clean($table)
+	public function clean($table)
 	{
 		$this->sql('DELETE FROM ' . $table);
 	}
 
-	function drop($table)
+	public function drop($table)
 	{
 		$this->sql('DROP TABLE ' . $table);
 	}
