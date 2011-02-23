@@ -2,7 +2,10 @@
 
 session_start();
 
-error_reporting(-1);
+if ($config['debug'])
+{
+	error_reporting(-1);
+}
 
 define('IN_LYNX', true);
 
