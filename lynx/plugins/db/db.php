@@ -9,22 +9,22 @@ class Db extends Plugin
 {
 	private $conn;
 
-	function lynx_construct()
+	public function lynx_construct()
 	{
 		$dsn = 'mysql:host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';dbname=' . $this->config['db'];
 		$this->conn = new PDO($dsn, $this->config['user'], $this->config['pass']);
 	}
 
-	function sql($sql)
+	public function sql($sql)
 	{
 		return $this->conn->query($sql);
 	}
 
-	function select($select)
+	public function select($select)
 	{
 		if (!isset($select['FROM']))
 		{
-			trigger_error("FROM not set");
+			trigger_error('FROM not set');
 			return false;
 		}
 
@@ -39,32 +39,32 @@ class Db extends Plugin
 		}
 		else
 		{
-			$sql .= $select['FROM'] . " ";
+			$sql .= $select['FROM'] . ' ';
 		}
 
 		$where_ary = null;
 		if (isset($select['WHERE']) && is_array($select['WHERE']))
 		{
-			$sql .= "WHERE ";
+			$sql .= 'WHERE ';
 			foreach (array_keys($select['WHERE']) as $where)
 			{
-				$where_ary[] = "$where = ?";
+				$where_ary[] = $where . ' = ?';
 			}
 			$sql .= implode(' AND ', $where_ary);
 		}
 		else if (isset($select['WHERE']))
 		{
-			$sql .= "WHERE " . $select['WHERE'] . " ";
+			$sql .= 'WHERE ' . $select['WHERE'] . ' ';
 		}
 
-		$sql .= (isset($select['ORDER']) ? "ORDER BY " . $select['ORDER'] . " " : "") . (isset($select['LIMIT']) ? "LIMIT " . $select['LIMIT'] . " " : "");
+		$sql .= (isset($select['ORDER']) ? 'ORDER BY ' . $select['ORDER'] . ' ' : null) . (isset($select['LIMIT']) ? 'LIMIT ' . $select['LIMIT'] . ' ' : null);
 
 		$statement = $this->conn->prepare($sql);
 		$statement->execute(is_array($select['WHERE']) ? array_values($select['WHERE']) : null);
 		return $statement;
 	}
 
-	function insert($insert)
+	public function insert($insert)
 	{
 		$return = array();
 		foreach ($insert as $table => $values)
@@ -76,7 +76,7 @@ class Db extends Plugin
 				$q_values .= ', ?';
 			}
 
-			$sql = "INSERT INTO " . $table . " ($columns) VALUES ($q_values);";
+			$sql = 'INSERT INTO ' . $table . " ($columns) VALUES ($q_values);";
 
 			$statement = $this->conn->prepare($sql);
 			$statement->execute(array_values($values));
@@ -85,7 +85,7 @@ class Db extends Plugin
 		return $return;
 	}
 
-	function select_row($select)
+	public function select_row($select)
 	{
 		$select['LIMIT'] = '0, 1';
 
@@ -97,7 +97,7 @@ class Db extends Plugin
 		return false;
 	}
 
-	function update($update)
+	public function update($update)
 	{
 		$sql = 'UPDATE ' . $update['TABLE'] . ' SET ';
 
@@ -146,7 +146,7 @@ class Db extends Plugin
 		return $statement;
 	}
 
-	function delete($delete)
+	public function delete($delete)
 	{
 		$sql = 'DELETE FROM ' . $delete['FROM'] . ' WHERE ';
 
@@ -170,12 +170,12 @@ class Db extends Plugin
 		return $this->sql($sql);
 	}
 
-	function clean($table)
+	public function clean($table)
 	{
 		$this->sql('DELETE FROM ' . $table);
 	}
 
-	function drop($table)
+	public function drop($table)
 	{
 		$this->sql('DROP TABLE ' . $table);
 	}
