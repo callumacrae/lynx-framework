@@ -17,5 +17,3 @@ class CalcController extends Controller
 		require($this->view('calc_results'));
 	}
 }
-
-?>

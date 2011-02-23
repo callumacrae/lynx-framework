@@ -8,5 +8,3 @@ class HelloController extends Controller
 		echo $this->lang->get('hello_world');
 	}
 }
-
-?>

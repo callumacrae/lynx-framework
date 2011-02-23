@@ -3,5 +3,3 @@
 $config = array (
 	'lang' => 'en',
 );
-
-?>

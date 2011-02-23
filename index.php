@@ -31,5 +31,3 @@ include(PATH_CONTROLLER . '/' . $path_info[1] . '.php');
 $controller = $path_info[1] . 'Controller';
 $controller = new $controller;
 $controller->$path_info[2]();
-
-?>
