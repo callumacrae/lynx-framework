@@ -4,6 +4,8 @@ session_start();
 
 error_reporting(-1);
 
+define('IN_LYNX', true);
+
 define('PATH_VIEW', __DIR__ . '/lynx/apps/views');
 define('PATH_CONTROLLER', __DIR__ . '/lynx/apps/controllers');
 define('PATH_INDEX', __DIR__);

@@ -1,5 +1,10 @@
 <?php
 
+if (!IN_LYNX)
+{
+        exit;
+}
+
 class Cookies extends Plugin
 {
 	private $cookies = array();

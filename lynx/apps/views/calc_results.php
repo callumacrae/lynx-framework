@@ -1,3 +1,11 @@
+<?php
+
+if (!IN_LYNX)
+{
+        exit;
+}
+
+?>
 <!DOCTYPE html>
 <html>
         <head>

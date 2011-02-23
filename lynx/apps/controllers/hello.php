@@ -1,5 +1,10 @@
 <?php
 
+if (!IN_LYNX)
+{
+        exit;
+}
+
 class HelloController extends Controller
 {
 	public function index()

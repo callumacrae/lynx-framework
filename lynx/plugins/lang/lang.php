@@ -1,5 +1,10 @@
 <?php
 
+if (!IN_LYNX)
+{
+        exit;
+}
+
 class Lang extends Plugin
 {
 	private $array = array();

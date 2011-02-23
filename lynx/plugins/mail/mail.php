@@ -1,5 +1,10 @@
 <?php
 
+if (!IN_LYNX)
+{
+        exit;
+}
+
 class Mail extends Plugin
 {
 	private $mail = array();
