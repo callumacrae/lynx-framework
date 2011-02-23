@@ -7,12 +7,12 @@ if (!IN_LYNX)
 
 class Controller
 {
-	function __construct()
+	public function __construct()
 	{
 		$this->hooks = new Hooks;
 	}
 
-	function load($module)
+	public function load($module)
 	{
 		if (isset($this->hooks->modules[$module]))
 		{
@@ -42,7 +42,7 @@ class Controller
 		return 1;
 	}
 
-	function view($path)
+	public function view($path)
 	{
 		$path = PATH_VIEW . '/' . $path . '.php';
 		if (!is_readable($path))
@@ -53,7 +53,7 @@ class Controller
 		return $path;
 	}
 
-	function exists($module)
+	public function exists($module)
 	{
 		return (isset($this->modules[$module]) && $this->modules[$module]);
 	}
