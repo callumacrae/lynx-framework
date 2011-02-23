@@ -68,6 +68,11 @@ class Auth extends Plugin
 
 		if (is_object($result))
 		{
+			if ($result->active !== 1)
+			{
+				echo 'Error: account not active';
+			}
+			
 			$this->set_session($result, $remember, true);
 			return true;
 		}
@@ -124,5 +129,133 @@ class Auth extends Plugin
 		unset($this->cookie->{$this->config['cookie_name']});
 		unset($this->info);
 		return true;
+	}
+
+	public function register($user, $email, $pass)
+	{
+		$this->mail = $this->get_plugin('mail');
+		$this->mail->set('subject', 'Account registration at ...');
+
+		//check whether username is already in use
+		$select = $this->db->select(array(
+			'FROM'	=> $this->config['table'],
+			'WHERE'	=> array(
+				'user'	=> $user,
+			),
+		));
+
+		if (is_object($select->fetchObject()))
+		{
+			echo 'Error: Username taken';
+			return false;
+		}
+
+		if (!$this->config['email_reuse'])
+		{
+			//check whether email is already in use
+			$select = $this->db->select(array(
+				'FROM'	=> $this->config['table'],
+				'WHERE'	=> array(
+					'email'	=> $email,
+				),
+			));
+
+			if (is_object($select->fetchObject()))
+			{
+				echo 'Error: Email address reuse not allowed';
+				return false;
+			}
+		}
+
+		//check whether email is valid (doesn't allow IPs)
+		//the beckreference is for the MX record check below
+		if (!preg_match('/^[A-Z0-9._%+-]+@([A-Z0-9.-]+\.[A-Z]{2,4})$/i', $email, $matches))
+		{
+			echo 'Error: Email address is not a valid email address';
+			return false;
+		}
+
+		/**
+		 * This part of the script checks the domain for a valid MX record.
+		 * If a valid MX record is not found, the email address must be
+		 * invalid, and so the script will produce an error and return false.
+		 *
+		 * This function may slow down your script: If there are many
+		 * timeouts on registration, disable check_mx in the configuration.
+		 */
+		if ($this->config['check_mx'] && !checkdnsrr($matches[1], 'MX'))
+		{
+			echo 'Error: Invalid email address';
+			return false;
+		}
+
+		$this->mail->set('to', $email);
+
+		//generate random confirmation code or set account as active
+		$active = $this->config['email_act'] ? md5(uniqid(rand(), true)) : true;
+
+		$this->db->insert(array(
+			$this->config['table']	=> array(
+				'user'			=> $user,
+				'pass'			=> $this->hash->pbkdf2($pass, $user),
+				'email'			=> $email,
+				'active'		=> $active,
+			),
+		));
+
+		$this->mail->set('body', 'Your account has been created with the following details:' . PHP_EOL . PHP_EOL . 'Username: ' . $user . PHP_EOL . 'Password: ' . $pass);
+		var_dump($this->mail->send());
+	}
+
+	public function activate($id)
+	{
+		return $this->db->update(array(
+			'TABLE'		=> $this->config['table'],
+			'VALUES'	=> array(
+				'active'	=> 1,
+			),
+			'WHERE'		=> array(
+				'id'		=> $id,
+			),
+		));
+	}
+
+	public function deactivate($id)
+	{
+		return $this->db->update(array(
+			'TABLE'		=> $this->config['table'],
+			'VALUES'	=> array(
+				'active'	=> 0,
+			),
+			'WHERE'		=> array(
+				'id'		=> $id,
+			),
+		));
+	}
+
+	public function confirm($id, $code)
+	{
+		if ($code === 0)
+		{
+			echo 'Error: Invalid confirmation code';
+			return false;
+		}
+
+		$user = $this->db->select(array(
+			'FROM'		=> $this->config['table'],
+			'VALUES'	=> 'active',
+			'WHERE'		=> array(
+				'id'		=> $id,
+				'active'	=> $code,
+			),
+		));
+
+		if (!is_object($user->fetchObject()))
+		{
+			echo 'Error: Confirmation code not valid.';
+			return false;
+		}
+
+		return $this->activate($id);
 	}
 }
