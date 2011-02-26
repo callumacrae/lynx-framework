@@ -6,5 +6,5 @@ if (!IN_LYNX)
 }
 
 $config = array(
-	'from'	=> 'test@example.com',
+	'from'	=> 'test@example.com', //the default email address to use
 );

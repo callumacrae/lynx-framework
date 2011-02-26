@@ -9,21 +9,37 @@ class Mail extends Plugin
 {
 	private $mail = array();
 
+	/**
+	 * Sets $item to $value, eg 'to' to 'email@example.com'
+	 *
+	 * @param string $item The item to set
+	 * @param string $value The value to set the item to
+	 */
 	public function set($item, $value)
 	{
 		$this->mail[$item] = $value;
 		return 1;
 	}
 
-	private function get($thing)
+	/**
+	 * Gets an already set item.
+	 *
+	 * @param string $item The item to return
+	 */
+	private function get($item)
 	{
-		if (isset($this->mail[$thing]))
+		if (isset($this->mail[$item]))
 		{
-			return $this->mail[$thing];
+			return $this->mail[$item];
 		}
 		return null;
 	}
 
+	/**
+	 * Send the email.
+	 *
+	 * Validates all the inputs and errors if invalid.
+	 */
 	public function send()
 	{
 		if (!$this->get('to'))
