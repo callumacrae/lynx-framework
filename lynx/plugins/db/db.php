@@ -1,18 +1,20 @@
 <?php
 
+namespace lynx\Plugins;
+
 if (!IN_LYNX)
 {
         exit;
 }
 
-class Db extends Plugin
+class Db extends \lynx\Core\Plugin
 {
 	private $conn;
 
 	public function lynx_construct()
 	{
 		$dsn = 'mysql:host=' . $this->config['host'] . ';port=' . $this->config['port'] . ';dbname=' . $this->config['db'];
-		$this->conn = new PDO($dsn, $this->config['user'], $this->config['pass']);
+		$this->conn = new \PDO($dsn, $this->config['user'], $this->config['pass']);
 	}
 
 	public function sql($sql)

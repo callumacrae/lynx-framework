@@ -1,11 +1,13 @@
 <?php
 
+namespace lynx\Plugins;
+
 if (!IN_LYNX)
 {
         exit;
 }
 
-class Lang extends Plugin
+class Lang extends \lynx\Core\Plugin
 {
 	private $array = array();
 	private $lang;

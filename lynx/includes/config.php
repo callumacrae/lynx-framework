@@ -1,11 +1,13 @@
 <?php
 
+namespace lynx\Core;
+
 if (!IN_LYNX)
 {
         exit;
 }
 
-class Config implements arrayaccess
+class Config implements \arrayaccess
 {
     private $container = array();
 

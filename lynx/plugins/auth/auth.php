@@ -1,11 +1,13 @@
 <?php
 
+namespace lynx\Plugins;
+
 if (!IN_LYNX)
 {
         exit;
 }
 
-class Auth extends Plugin
+class Auth extends \lynx\Core\Plugin
 {
 	private $failed = false;
 	public $id;

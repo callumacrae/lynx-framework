@@ -36,7 +36,8 @@ class Controller
 
 		require($path);
 
-		$this->$module = new $module($module);
+		$module_name = '\\lynx\\plugins\\' . $module;
+		$this->$module = new $module_name($module);
 
 		$this->hooks->modules[$module] = true;
 

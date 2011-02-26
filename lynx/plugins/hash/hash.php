@@ -1,6 +1,8 @@
 <?php
 
-class Hash extends Plugin
+namespace lynx\Plugins;
+
+class Hash extends \lynx\Core\Plugin
 {
 	public function pbkdf2($input, $s = null, $c = null, $kl = null, $a = null)
 	{
