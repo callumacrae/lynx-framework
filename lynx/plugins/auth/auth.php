@@ -12,11 +12,24 @@ class Auth extends Plugin
 	public $logged;
 	public $info;
 
+	/**
+	 * Checks whether the user is already logged in.
+	 *
+	 * First checks whether the session already exists, and validates
+	 * it against the details in the database. If this is all fine,
+	 * it sets the session (or logs the user out if the details are
+	 * incorrect)
+	 *
+	 * If the session is not set, but the cookie is, we validate the
+	 * cookie against the database (the same as the session stuff)
+	 */
 	public function lynx_construct()
 	{
 		$this->db = $this->get_plugin('db');
 		$this->cookie = $this->get_plugin('cookies');
 		$this->hash = $this->get_plugin('hash');
+
+		//check the session
 		if (isset($_SESSION['logged']))
 		{ 
 			$result = $this->db->select(array(
@@ -30,6 +43,7 @@ class Auth extends Plugin
 			));
 			$result = $result->fetchObject();
 
+			//if it isn't an object, there are no rows and the details are false
 			if (is_object($result))
 			{ 
 				$this->set_session($result, false, false); 
@@ -39,6 +53,7 @@ class Auth extends Plugin
 				$this->logout(); 
 			} 
 		}
+		//check the cookie
 		else if (isset($this->cookie->{$this->config['cookie_name']}))
 		{
 			$cookie = $this->cookie->{$this->config['cookie_name']};
@@ -59,6 +74,14 @@ class Auth extends Plugin
 		} 
 	}
 
+	/**
+	 * The login method validates the information given to it against the
+	 * database, and attempts to log the user in if the given info is correct.
+	 *
+	 * @param string $user The username to validate
+	 * @param string $padd The password to validate against the username
+	 * @param boolean $remember Remember the login or not?
+	 */
 	public function login($user, $pass, $remember)
 	{
 		$user = $this->db->select(array(
@@ -89,6 +112,14 @@ class Auth extends Plugin
 		}
 	}
 
+	/**
+	 * set_session is a private session used by the other methods in the auth
+	 * module. It sets the session info and updates the database if required.
+	 *
+	 * @param object $result The object returned by the db class containing the user info
+	 * @param boolean $remember Remember the session or not?
+	 * @param boolean $init Update the database?
+	 */
 	private function set_session($result, $remember, $init = true)
 	{
 		$this->logged = true;
@@ -119,6 +150,12 @@ class Auth extends Plugin
 		}
 	}
 
+	/**
+	 * Logs the user out
+	 *
+	 * It destroys the session, and updates the database. It also
+	 * unsets the cookie and $this->info.
+	 */
 	public function logout()
 	{
 		session_destroy();
@@ -136,6 +173,16 @@ class Auth extends Plugin
 		return true;
 	}
 
+	/**
+	 * Registers a new user.
+	 *
+	 * Includes a series of checks which make sure that the user is
+	 * a user and not a bot (by checking stuff like email address)
+	 *
+	 * @param string $user The username of the account to be registered
+	 * @param string $email The email address of account to be registered
+	 * @param string $pass The desired password
+	 */
 	public function register($user, $email, $pass)
 	{
 		$this->mail = $this->get_plugin('mail');
@@ -148,7 +195,6 @@ class Auth extends Plugin
 				'user'	=> $user,
 			),
 		));
-
 		if (is_object($select->fetchObject()))
 		{
 			echo 'Error: Username taken';
@@ -172,8 +218,13 @@ class Auth extends Plugin
 			}
 		}
 
-		//check whether email is valid (doesn't allow IPs)
-		//the beckreference is for the MX record check below
+		/**
+		 * Checks whether email is valid (mostly). It doesn't allow IPs
+		 * or email addresses with extentions above 4 characters long,
+		 * which is basically just .museum anyway.
+		 *
+		 * The backreference in the regex is for the MX record check below.
+		 */
 		if (!preg_match('/^[A-Z0-9._%+-]+@([A-Z0-9.-]+\.[A-Z]{2,4})$/i', $email, $matches))
 		{
 			echo 'Error: Email address is not a valid email address';
@@ -196,9 +247,13 @@ class Auth extends Plugin
 
 		$this->mail->set('to', $email);
 
-		//generate random confirmation code or set account as active
+		/**
+		 * Generate a random string to be used as a confirmation code or
+		 * set account as active (depends what you set in the config)
+		 */
 		$active = $this->config['email_act'] ? md5(uniqid(rand(), true)) : true;
 
+		//insert them into the database
 		$this->db->insert(array(
 			$this->config['table']	=> array(
 				'user'			=> $user,
@@ -208,10 +263,16 @@ class Auth extends Plugin
 			),
 		));
 
+		//send a really ugly email. I need to change this.
 		$this->mail->set('body', 'Your account has been created with the following details:' . PHP_EOL . PHP_EOL . 'Username: ' . $user . PHP_EOL . 'Password: ' . $pass);
-		var_dump($this->mail->send());
+		return $this->mail->send();
 	}
 
+	/**
+	 * Activates account using the specified ID.
+	 *
+	 * @param int $id The ID of the account to be activated
+	 */
 	public function activate($id)
 	{
 		return $this->db->update(array(
@@ -225,6 +286,11 @@ class Auth extends Plugin
 		));
 	}
 
+	/**
+	 * Deactivates account using the specified ID.
+	 *
+	 * @param int $id The ID of the account to be deactivated
+	 */
 	public function deactivate($id)
 	{
 		return $this->db->update(array(
@@ -238,6 +304,13 @@ class Auth extends Plugin
 		));
 	}
 
+	/**
+	 * Confirms account against confirmation code and
+	 * marks the account as actived if valid
+	 *
+	 * @param int $id The ID of the account to be checked
+	 * @param string $code The confirmation code to be checked
+	 */
 	public function confirm($id, $code)
 	{
 		if ($code === 0)
