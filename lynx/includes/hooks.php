@@ -38,7 +38,7 @@ class Hooks
 		}
 	}
 	
-	public function call($hook, $param=false)
+	public function call($hook, $param = false)
 	{
 		$this->get_hooks();
 		
