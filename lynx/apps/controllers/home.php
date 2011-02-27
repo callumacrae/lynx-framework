@@ -5,7 +5,7 @@ if (!IN_LYNX)
         exit;
 }
 
-class HomeController extends Controller
+class HomeController extends \lynx\Core\Controller
 {
 	function index()
 	{
