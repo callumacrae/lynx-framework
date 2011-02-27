@@ -6,5 +6,5 @@ if (!IN_LYNX)
 }
 
 $config = array (
-	'lang' => 'en',
+	'lang' => 'en', //default language to use
 );

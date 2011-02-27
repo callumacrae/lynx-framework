@@ -9,6 +9,12 @@ abstract class Plugin
 {
 	public $config = array();
 
+	/**
+	 * Sets up the plugin - mostly includes the config
+	 * and calls the construct
+	 *
+	 * @param string $module The name of the plugin to set up
+	 */
 	public function __construct($module)
 	{
 		$path = PATH_INDEX . '/lynx/plugins/' . $module . '/config.php';
@@ -27,6 +33,11 @@ abstract class Plugin
 		return 1;
 	}
 
+	/**
+	 * Give the plugin... another plugin
+	 *
+	 * @param string $plugin The name of the plugin to return
+	 */
 	public function get_plugin($plugin)
 	{
 		$controller =& $GLOBALS['controller'];
