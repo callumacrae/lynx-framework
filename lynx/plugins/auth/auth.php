@@ -101,6 +101,7 @@ class Auth extends Plugin
 				echo 'Error: account not active';
 			}
 			
+			$result->cookie = md5(uniqid(rand(), true));
 			$this->set_session($result, $remember, true);
 			return true;
 		}
@@ -163,6 +164,7 @@ class Auth extends Plugin
 			'TABLE'		=> $this->config['table'],
 			'VALUES'	=> array(
 				'session'	=> null,
+				'cookie'	=> null,
 			),
 			'WHERE'		=> array(
 				'id'		=> $this->id,
