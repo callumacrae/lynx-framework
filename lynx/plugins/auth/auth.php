@@ -199,7 +199,7 @@ class Auth extends Plugin
 		));
 		if (is_object($select->fetchObject()))
 		{
-			echo 'Error: Username taken';
+			$this->error = 'Username ' . $user . ' already taken';
 			return false;
 		}
 
@@ -215,7 +215,7 @@ class Auth extends Plugin
 
 			if (is_object($select->fetchObject()))
 			{
-				echo 'Error: Email address reuse not allowed';
+				$this->error = 'Email address reuse not allowed';
 				return false;
 			}
 		}
@@ -229,7 +229,7 @@ class Auth extends Plugin
 		 */
 		if (!preg_match('/^[A-Z0-9._%+-]+@([A-Z0-9.-]+\.[A-Z]{2,4})$/i', $email, $matches))
 		{
-			echo 'Error: Email address is not a valid email address';
+			$this->error = 'Specified email address is not a valid email address';
 			return false;
 		}
 
@@ -243,7 +243,7 @@ class Auth extends Plugin
 		 */
 		if ($this->config['check_mx'] && !checkdnsrr($matches[1], 'MX'))
 		{
-			echo 'Error: Invalid email address';
+			$this->error = 'Invalid email address';
 			return false;
 		}
 
@@ -317,7 +317,7 @@ class Auth extends Plugin
 	{
 		if ($code === 0)
 		{
-			echo 'Error: Invalid confirmation code';
+			$this->error = 'Invalid confirmation code';
 			return false;
 		}
 
@@ -332,7 +332,7 @@ class Auth extends Plugin
 
 		if (!is_object($user->fetchObject()))
 		{
-			echo 'Error: Confirmation code not valid.';
+			$this->error = 'Confirmation code not valid.';
 			return false;
 		}
 
@@ -360,7 +360,7 @@ class Auth extends Plugin
 		$user = $user->fetchObject();
 		if (!is_object($user))
 		{
-			echo 'Error: User not found';
+			$this->error = 'User not found';
 			return false;
 		}
 
@@ -382,6 +382,7 @@ class Auth extends Plugin
 		$this->new_pass = $pass;
 		
 		$this->load('mail');
+		$this->mail->set('subject', 'Password reset');
 		$this->mail->set('to', $user->email);
 		$this->mail->set('body', 'Your password has been reset to ' . $pass);
 		return $this->mail->send();
