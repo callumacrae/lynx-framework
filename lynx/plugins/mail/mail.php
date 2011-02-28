@@ -1,11 +1,13 @@
 <?php
 
+namespace lynx\Plugins;
+
 if (!IN_LYNX)
 {
         exit;
 }
 
-class Mail extends Plugin
+class Mail extends \lynx\Core\Plugin
 {
 	private $mail = array();
 

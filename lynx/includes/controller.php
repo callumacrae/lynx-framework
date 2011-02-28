@@ -1,5 +1,7 @@
 <?php
 
+namespace lynx\Core;
+
 if (!IN_LYNX)
 {
         exit;
@@ -50,7 +52,8 @@ class Controller
 		require($path);
 
 		//set the module
-		$this->$module = new $module($module);
+		$module_name = '\\lynx\\plugins\\' . $module;
+		$this->$module = new $module_name($module);
 
 		$this->hooks->modules[$module] = true;
 

@@ -1,6 +1,8 @@
 <?php
 
-class Hash extends Plugin
+namespace lynx\Plugins;
+
+class Hash extends \lynx\Core\Plugin
 {
 	/**
 	 * The pbkdf2 method hashes data by the PBKDF2 standard, as documented in RFC2898

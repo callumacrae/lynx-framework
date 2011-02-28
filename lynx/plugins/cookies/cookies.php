@@ -1,11 +1,13 @@
 <?php
 
+namespace lynx\Plugins;
+
 if (!IN_LYNX)
 {
         exit;
 }
 
-class Cookies extends Plugin
+class Cookies extends \lynx\Core\Plugin
 {
 	private $cookies = array();
 

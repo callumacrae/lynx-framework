@@ -1,5 +1,7 @@
 <?php
 
+namespace lynx\Core;
+
 if (!IN_LYNX)
 {
         exit;
@@ -10,7 +12,7 @@ if (!IN_LYNX)
  * Not only does it automatically load the configuration for that plugin, it also
  * flushes all configuration changes back to the configuration file for that plugin.
  */
-class Config implements arrayaccess
+class Config implements \arrayaccess
 {
     private $container = array();
 

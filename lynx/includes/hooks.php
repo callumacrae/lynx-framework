@@ -1,5 +1,7 @@
 <?php
 
+namespace lynx\Core;
+
 if (!IN_LYNX)
 {
         exit;
