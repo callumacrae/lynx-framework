@@ -338,4 +338,52 @@ class Auth extends Plugin
 
 		return $this->activate($id);
 	}
+
+	/**
+	 * Resets the password of a user. It is recommended that you don't call
+	 * this function without confirmation - send the user an email with a
+	 * link to a page which will call this method, or it'll get abused the
+	 * hell out of.
+	 *
+	 * @param int $id The ID of the user to have the password reset
+	 * @param string $pass The password to be reset to (opt)
+	 */
+	public function reset_pass($id, $pass = false)
+	{
+		$user = $this->db->select(array(
+			'FROM'	=> $this->config['table'],
+			'WHERE'	=> array(
+				'id'	=> $id,
+			),
+		));
+
+		$user = $user->fetchObject();
+		if (!is_object($user))
+		{
+			echo 'Error: User not found';
+			return false;
+		}
+
+		if (!$pass)
+		{
+			$pass = md5(uniqid(rand(), true));
+		}
+
+		$this->db->update(array(
+			'TABLE'		=> $this->config['table'],
+			'VALUES'	=> array(
+				'pass'		=> $this->hash->pbkdf2($pass, $user->user),
+			),
+			'WHERE'		=> array(
+				'id'		=> $id,
+			),
+		));
+
+		$this->new_pass = $pass;
+		
+		$this->load('mail');
+		$this->mail->set('to', $user->email);
+		$this->mail->set('body', 'Your password has been reset to ' . $pass);
+		return $this->mail->send();
+	}
 }
