@@ -5,6 +5,9 @@ if (!IN_LYNX)
         exit;
 }
 
+/**
+ * Nothing to see here, move on!
+ */
 require_once('lynx/includes/config.php');
 require_once(PATH_INDEX . '/config.php');
 if ($config['hooks_enable'])

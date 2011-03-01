@@ -1,20 +1,32 @@
 <?php
 
+namespace lynx\Plugins;
+
 if (!IN_LYNX)
 {
         exit;
 }
 
-class Lang extends Plugin
+class Lang extends \lynx\Core\Plugin
 {
 	private $array = array();
 	private $lang;
 
+	/**
+	 * Sets the default language according to the configuration
+	 */
 	function lynx_contruct()
 	{
 		$this->set($this->config['lang']);
 	}
 
+	/**
+	 * Sets a different language, and attempts to load the
+	 * language file for that language. If it fails, the language
+	 * will not be loaded and there will be loads of random errors
+	 *
+	 * @param string $lang The language to change to
+	 */
 	function set($lang)
 	{
 		$this->lang = $lang;
@@ -29,6 +41,13 @@ class Lang extends Plugin
 		return true;
 	}
 
+	/**
+	 * Loads a language file according to $file, allowing different language files
+	 * for different things - you may not want to load a huge array into the
+	 * memory when you're only going to use a few of the values.
+	 *
+	 * @param string $file The file to load from the already set language
+	 */
 	function load($file)
 	{
 		$lang = $this->lang;
@@ -43,6 +62,14 @@ class Lang extends Plugin
 		return true;
 	}
 
+	/**
+	 * Gets a language entry, and runs sprintf if required.
+	 *
+	 * I don't think it works properly right now
+	 *
+	 * @param string $item The language item to get
+	 * @param array $values The values to sprintf against the language item
+	 */
 	function get($item, $values=null)
 	{
 		if (!isset($this->array[$item]))

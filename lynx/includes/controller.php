@@ -1,5 +1,7 @@
 <?php
 
+namespace lynx\Core;
+
 if (!IN_LYNX)
 {
         exit;
@@ -7,12 +9,23 @@ if (!IN_LYNX)
 
 class Controller
 {
-	function __construct()
+	/**
+	 * Create the controller
+	 *
+	 * Also sets up the hooks class
+	 */
+	public function __construct()
 	{
 		$this->hooks = new Hooks;
 	}
 
-	function load($module)
+	/**
+	 * Loads a plugin.
+	 *
+	 * @param string $module The module name
+	 * @param boolean $plugin Is this being called from a plugin?
+	 */
+	public function load($module, $plugin = false)
 	{
 		if (isset($this->hooks->modules[$module]))
 		{
@@ -20,6 +33,7 @@ class Controller
 			return $module;
 		}
 
+		//check whether the plugin directory exists
 		$path = PATH_INDEX . '/lynx/plugins/' . $module . '/';
 		if (!is_dir($path))
 		{
@@ -27,6 +41,7 @@ class Controller
 			return false;
 		}
 
+		//check whether the plugin itself exists
 		$path .= $module . '.php';
 		if (!is_readable($path))
 		{
@@ -36,13 +51,29 @@ class Controller
 
 		require($path);
 
-		$this->$module = new $module($module);
+		//set the module
+		$module_name = '\\lynx\\plugins\\' . $module;
+		$this->$module = new $module_name($module);
 
 		$this->hooks->modules[$module] = true;
-		return 1;
+
+		if ($plugin)
+		{
+			$module =& $this->$module;
+			return $module;
+		}
+		return true;
 	}
 
-	function view($path)
+	/**
+	 * Returns the path of the specified view, or errors if the
+	 * view cannot be found or read.
+	 *
+	 * @todo export($GLOBALS), we dont want this in an include
+	 *
+	 * @param string $path the name of the view file (excluding the extension)
+	 */
+	public function view($path)
 	{
 		$path = PATH_VIEW . '/' . $path . '.php';
 		if (!is_readable($path))
@@ -51,10 +82,5 @@ class Controller
 			return false;
 		}
 		return $path;
-	}
-
-	function exists($module)
-	{
-		return (isset($this->modules[$module]) && $this->modules[$module]);
 	}
 }

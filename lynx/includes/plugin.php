@@ -1,5 +1,7 @@
 <?php
 
+namespace lynx\Core;
+
 if (!IN_LYNX)
 {
         exit;
@@ -9,7 +11,13 @@ abstract class Plugin
 {
 	public $config = array();
 
-	function __construct($module)
+	/**
+	 * Sets up the plugin - mostly includes the config
+	 * and calls the construct
+	 *
+	 * @param string $module The name of the plugin to set up
+	 */
+	public function __construct($module)
 	{
 		$path = PATH_INDEX . '/lynx/plugins/' . $module . '/config.php';
 		if (!is_readable($path))
@@ -27,7 +35,12 @@ abstract class Plugin
 		return 1;
 	}
 
-	function get_plugin($plugin)
+	/**
+	 * Give the plugin... another plugin
+	 *
+	 * @param string $plugin The name of the plugin to return
+	 */
+	public function get_plugin($plugin)
 	{
 		$controller =& $GLOBALS['controller'];
 		return $controller->load($plugin);

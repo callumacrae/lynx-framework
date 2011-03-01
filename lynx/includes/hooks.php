@@ -1,5 +1,7 @@
 <?php
 
+namespace lynx\Core;
+
 if (!IN_LYNX)
 {
         exit;
@@ -10,6 +12,9 @@ class Hooks
 	private $module_classes = array();
 	public $modules = array();
 
+	/**
+	 * Refreshes the hooks, makes sure all of them are in line
+	 */
 	private function get_hooks()
 	{
 		if (count($this->module_classes) !== count($this->modules))
@@ -38,7 +43,13 @@ class Hooks
 		}
 	}
 	
-	function call($hook, $param=false)
+	/**
+	 * Call the specifies hook
+	 *
+	 * @param string $hook The name of the hook to call
+	 * @param mixed $param Optional parameters to be passed to the hook
+	 */
+	public function call($hook, $param = false)
 	{
 		$this->get_hooks();
 		
