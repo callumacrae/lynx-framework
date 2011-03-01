@@ -1,6 +1,21 @@
 <?php
 
+/**
+ * @package lynx-framework
+ * @version $Id$
+ * @copyright (c) lynxphp
+ * @license http://creativecommons.org/licenses/by-sa/3.0/ CC by-sa
+ */
+
 namespace lynx\Plugins;
+
+/**
+ * @ignore
+ */
+if (!defined('IN_LYNX'))
+{
+        exit;
+}
 
 class Hash extends \lynx\Core\Plugin
 {
