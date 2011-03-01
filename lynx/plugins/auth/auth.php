@@ -100,7 +100,8 @@ class Auth extends \lynx\Core\Plugin
 		{
 			if ($result->active !== 1)
 			{
-				echo 'Error: account not active';
+				$this->error = 'Error: account not active';
+				return false;
 			}
 			
 			$result->cookie = md5(uniqid(rand(), true));
