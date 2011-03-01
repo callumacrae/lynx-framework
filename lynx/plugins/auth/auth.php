@@ -383,7 +383,7 @@ class Auth extends \lynx\Core\Plugin
 
 		$this->new_pass = $pass;
 		
-		$this->get_plugin('mail');
+		$this->mail = $this->get_plugin('mail');
 		$this->mail->set('subject', 'Password reset');
 		$this->mail->set('to', $user->email);
 		$this->mail->set('body', 'Your password has been reset to ' . $pass);
