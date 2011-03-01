@@ -22,9 +22,9 @@ require_once('lynx/includes/includes.php');
  *
  * @todo It's buggy to do it like this - use header('Location: to send them to the right place
  */
-if (isset($_SERVER['PATH_INFO']))
+if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/')
 {
-	$path_info = explode("/", $_SERVER['PATH_INFO']);
+	$path_info = explode('/', $_SERVER['PATH_INFO']);
 	$path_info[2] = isset($path_info[2]) ? $path_info[2] : $config['d_function'];
 }
 else
