@@ -37,10 +37,19 @@ class Controller
 	 */
 	public function load($module, $plugin = false)
 	{
-		if (isset($this->hooks->modules[$module]))
+		if ($plugin)
 		{
-			$module =& $this->$module;
-			return $module;
+			if (!isset($this->hooks->modules[$module]))
+			{
+				$this->load($module);
+			}
+			return $this->$module;
+		}
+
+		//checks whether the plugin is already loaded
+		if ($this->hooks->modules[$module])
+		{
+			return true;
 		}
 
 		//check whether the plugin directory exists
@@ -67,11 +76,6 @@ class Controller
 
 		$this->hooks->modules[$module] = true;
 
-		if ($plugin)
-		{
-			$module =& $this->$module;
-			return $module;
-		}
 		return true;
 	}
 

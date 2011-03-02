@@ -59,6 +59,6 @@ abstract class Plugin
 	public function get_plugin($plugin)
 	{
 		global $controller;
-		return $controller->load($plugin);
+		return $controller->load($plugin, true);
 	}
 }
