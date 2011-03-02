@@ -23,7 +23,7 @@ if (!defined('IN_LYNX'))
 $config = array(
 	'host'	=> 'localhost',
 	'port'	=> 3306,
-	'db'	=> 'test',
+	'db'	=> 'lynx-framework',
 	'user'	=> 'root',
 	'pass'	=> '',
 );
