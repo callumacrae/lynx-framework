@@ -21,6 +21,7 @@ class HomeController extends \lynx\Core\Controller
 	{
 		$this->load('lang');
 		$this->load('auth');
+		$this->load('mail');
 		if (!$this->auth->logged)
 		{
 			if($this->auth->login('callum', 'test', true))

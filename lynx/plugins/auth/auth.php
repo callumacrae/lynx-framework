@@ -110,7 +110,8 @@ class Auth extends \lynx\Core\Plugin
 		{
 			if ($result->active !== 1)
 			{
-				echo 'Error: account not active';
+				$this->error = 'Error: account not active';
+				return false;
 			}
 			
 			$result->cookie = md5(uniqid(rand(), true));
@@ -211,9 +212,68 @@ class Auth extends \lynx\Core\Plugin
 		));
 		if (is_object($select->fetchObject()))
 		{
-			echo 'Error: Username taken';
+			$this->error = 'Username ' . $user . ' already taken';
 			return false;
 		}
+
+		//check username and password lengths
+		if (strlen($user) < $this->config['user_min'])
+		{
+			$this->error = 'Username too short';
+			return false;
+		}
+		if (strlen($user) > $this->config['user_max'])
+		{
+			$this->error = 'Username too long';
+			return false;
+		}
+		if (strlen($pass) < $this->config['pass_min'])
+		{
+			$this->error = 'Password too short';
+			return false;
+		}
+		if (strlen($pass) > $this->config['pass_max'])
+		{
+			$this->error = 'Password too long';
+			return false;
+		}
+		if ($this->config['pass_complex'])
+		{
+			/**
+			 * Check the password complexity.
+			 *
+			 * Due to the lack of break statements, case 3 (for example)
+			 * will also be checked against cases 1 and 2, guaranteeing
+			 * extra complexity.
+			 */
+			switch ($this->config['pass_complex'])
+			{
+				case 3:
+					//check for symbols
+					if (preg_match('/^[0-9a-zA-Z]+$/', $pass))
+					{
+						$this->error = 'Passwords should contain special characters.';
+						return false;
+					}
+
+				case 2:
+					//check for mixed case
+					if (strtolower($pass) == $pass|| strtoupper($pass) == $pass)
+					{
+						$this->error = 'Passwords should contain both uppercase and lowercase letters';
+						return false;
+					}
+
+				case 1:
+					//check for a mix of letters and nums
+					if (!preg_match('/[0-9]/', $pass))
+					{
+						$this->error = 'Your password must contain a mixture of numbers and letters';
+						return false;
+					}
+			}
+		}
+
 
 		if (!$this->config['email_reuse'])
 		{
@@ -227,7 +287,7 @@ class Auth extends \lynx\Core\Plugin
 
 			if (is_object($select->fetchObject()))
 			{
-				echo 'Error: Email address reuse not allowed';
+				$this->error = 'Email address reuse not allowed';
 				return false;
 			}
 		}
@@ -241,7 +301,7 @@ class Auth extends \lynx\Core\Plugin
 		 */
 		if (!preg_match('/^[A-Z0-9._%+-]+@([A-Z0-9.-]+\.[A-Z]{2,4})$/i', $email, $matches))
 		{
-			echo 'Error: Email address is not a valid email address';
+			$this->error = 'Specified email address is not a valid email address';
 			return false;
 		}
 
@@ -255,7 +315,7 @@ class Auth extends \lynx\Core\Plugin
 		 */
 		if ($this->config['check_mx'] && !checkdnsrr($matches[1], 'MX'))
 		{
-			echo 'Error: Invalid email address';
+			$this->error = 'Invalid email address';
 			return false;
 		}
 
@@ -329,7 +389,7 @@ class Auth extends \lynx\Core\Plugin
 	{
 		if ($code === 0)
 		{
-			echo 'Error: Invalid confirmation code';
+			$this->error = 'Invalid confirmation code';
 			return false;
 		}
 
@@ -344,10 +404,59 @@ class Auth extends \lynx\Core\Plugin
 
 		if (!is_object($user->fetchObject()))
 		{
-			echo 'Error: Confirmation code not valid.';
+			$this->error = 'Confirmation code not valid.';
 			return false;
 		}
 
 		return $this->activate($id);
+	}
+
+	/**
+	 * Resets the password of a user. It is recommended that you don't call
+	 * this function without confirmation - send the user an email with a
+	 * link to a page which will call this method, or it'll get abused the
+	 * hell out of.
+	 *
+	 * @param int $id The ID of the user to have the password reset
+	 * @param string $pass The password to be reset to (opt)
+	 */
+	public function reset_pass($id, $pass = false)
+	{
+		$user = $this->db->select(array(
+			'FROM'	=> $this->config['table'],
+			'WHERE'	=> array(
+				'id'	=> $id,
+			),
+		));
+
+		$user = $user->fetchObject();
+		if (!is_object($user))
+		{
+			$this->error = 'User not found';
+			return false;
+		}
+
+		if (!$pass)
+		{
+			$pass = md5(uniqid(rand(), true));
+		}
+
+		$this->db->update(array(
+			'TABLE'		=> $this->config['table'],
+			'VALUES'	=> array(
+				'pass'		=> $this->hash->pbkdf2($pass, $user->user),
+			),
+			'WHERE'		=> array(
+				'id'		=> $id,
+			),
+		));
+
+		$this->new_pass = $pass;
+		
+		$this->mail = $this->get_plugin('mail');
+		$this->mail->set('subject', 'Password reset');
+		$this->mail->set('to', $user->email);
+		$this->mail->set('body', 'Your password has been reset to ' . $pass);
+		return $this->mail->send();
 	}
 }
