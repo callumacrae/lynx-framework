@@ -37,6 +37,12 @@ abstract class Plugin
 		include($path);
 		$this->config = new Config($config, $module);
 
+		if (!$this->config['hooks_disable'])
+		{
+			global $controller;
+			$this->hooks = $controller->hooks;
+		}
+
 		if (method_exists($this, 'lynx_construct'))
 		{
 			$this->lynx_construct();
@@ -52,7 +58,7 @@ abstract class Plugin
 	 */
 	public function get_plugin($plugin)
 	{
-		$controller =& $GLOBALS['controller'];
+		global $controller;
 		return $controller->load($plugin);
 	}
 }

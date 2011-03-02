@@ -19,6 +19,7 @@ class HomeController extends \lynx\Core\Controller
 {
 	function index()
 	{
+		$this->load('lang');
 		$this->load('cookies');
 		$this->load('hash');
 		$this->load('db');

@@ -42,7 +42,7 @@ class Hooks
 					continue;
 				}
 				include($file);
-				$module .= '_hooks';
+				$module = '\\lynx\\Hooks\\' . $module . '_hooks';
 				if (class_exists($module))
 				{
 					$this->module_classes[$module] = new $module;
