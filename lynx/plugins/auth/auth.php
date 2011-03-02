@@ -206,6 +206,65 @@ class Auth extends \lynx\Core\Plugin
 			return false;
 		}
 
+		//check username and password lengths
+		if (strlen($user) < $this->config['user_min'])
+		{
+			$this->error = 'Username too short';
+			return false;
+		}
+		if (strlen($user) > $this->config['user_max'])
+		{
+			$this->error = 'Username too long';
+			return false;
+		}
+		if (strlen($pass) < $this->config['pass_min'])
+		{
+			$this->error = 'Password too short';
+			return false;
+		}
+		if (strlen($pass) > $this->config['pass_max'])
+		{
+			$this->error = 'Password too long';
+			return false;
+		}
+		if ($this->config['pass_complex'])
+		{
+			/**
+			 * Check the password complexity.
+			 *
+			 * Due to the lack of break statements, case 3 (for example)
+			 * will also be checked against cases 1 and 2, guaranteeing
+			 * extra complexity.
+			 */
+			switch ($this->config['pass_complex'])
+			{
+				case 3:
+					//check for symbols
+					if (preg_match('/^[0-9a-zA-Z]+$/', $pass))
+					{
+						$this->error = 'Passwords should contain special characters.';
+						return false;
+					}
+
+				case 2:
+					//check for mixed case
+					if (strtolower($pass) == $pass|| strtoupper($pass) == $pass)
+					{
+						$this->error = 'Passwords should contain both uppercase and lowercase letters';
+						return false;
+					}
+
+				case 1:
+					//check for a mix of letters and nums
+					if (!preg_match('/[0-9]/', $pass))
+					{
+						$this->error = 'Your password must contain a mixture of numbers and letters';
+						return false;
+					}
+			}
+		}
+
+
 		if (!$this->config['email_reuse'])
 		{
 			//check whether email is already in use
