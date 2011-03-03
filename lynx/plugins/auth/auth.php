@@ -108,7 +108,7 @@ class Auth extends \lynx\Core\Plugin
 
 		if (is_object($result))
 		{
-			if ($result->active !== 1)
+			if ($result->active != 1)
 			{
 				$this->error = 'Error: account not active';
 				return false;
