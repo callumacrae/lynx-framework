@@ -80,8 +80,8 @@ class Controller
 	}
 
 	/**
-	 * Returns the path of the specified view, or errors if the
-	 * view cannot be found or read.
+	 * Returns the path of the specified view, or errors if the view cannot
+	 * be found or read.
 	 *
 	 * @todo export($GLOBALS), we dont want this in an include
 	 *

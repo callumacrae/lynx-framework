@@ -27,9 +27,9 @@ class Cookies extends \lynx\Core\Plugin
 	}
 
 	/**
-	 * Returns value ofcookie. NOTE: It will return a different result
-	 * to $_COOKIE['$cookie'], as it changes the value as it is updated,
-	 * therefore if you set a cookie earlier in the script you will
+	 * Returns value of specified cookie. NOTE: It will return a different
+	 * result to $_COOKIE['$cookie'], as it changes the value as it is
+	 * updated, therefore if you set a cookie earlier in the script you will
 	 * get the new value, not the old value.
 	 *
 	 * @param string $cookie The name of the cookie

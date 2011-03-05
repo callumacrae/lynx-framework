@@ -18,9 +18,10 @@ if (!defined('IN_LYNX'))
 }
 
 /**
- * The config class is called when a plugin is loaded, and assigned to $plugin->config
- * Not only does it automatically load the configuration for that plugin, it also
- * flushes all configuration changes back to the configuration file for that plugin.
+ * The config class is called when a plugin is loaded, and assigned to
+ * $plugin->config. Not only does it automatically load the configuration
+ * for that plugin, it also flushes all configuration changes back to the
+ * configuration file for that plugin.
  */
 class Config implements \arrayaccess
 {

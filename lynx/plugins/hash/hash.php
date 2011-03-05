@@ -20,7 +20,8 @@ if (!defined('IN_LYNX'))
 class Hash extends \lynx\Core\Plugin
 {
 	/**
-	 * The pbkdf2 method hashes data by the PBKDF2 standard, as documented in RFC2898
+	 * The pbkdf2 method hashes data by the PBKDF2 standard, as
+	 * documented in RFC2898:
 	 * http://tools.ietf.org/html/rfc2898
 	 *
 	 * Hashes $input by the hash of $s. If $s isn't specifies, use the salt
