@@ -67,4 +67,21 @@ abstract class Plugin
 		$this->$location =& $controller->load_plugin($plugin, false, true);
 		return true;
 	}
+
+	/**
+	 * Give the plugin a helper
+	 *
+	 * @param string $helper The name of the helper to return
+	 */
+	public function get_helper($helper, $location = false)
+	{
+		if (!$location)
+		{
+			$location = $helper;
+		}
+
+		global $controller;
+		$this->$location =& $controller->load_helper($helper, false, true);
+		return true;
+	}
 }
