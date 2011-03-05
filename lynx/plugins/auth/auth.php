@@ -38,7 +38,7 @@ class Auth extends \lynx\Core\Plugin
 	public function lynx_construct()
 	{
 		$this->get_plugin('db');
-		$this->get_plugin('cookies');
+		$this->get_helper('cookies');
 		$this->get_plugin('hash');
 
 		//check the session
