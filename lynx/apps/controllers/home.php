@@ -19,9 +19,9 @@ class HomeController extends \lynx\Core\Controller
 {
 	function index()
 	{
-		$this->load('lang');
-		$this->load('auth');
-		$this->load('mail');
+		$this->load_plugin('lang');
+		$this->load_plugin('auth');
+		$this->load_plugin('mail');
 		if (!$this->auth->logged)
 		{
 			if($this->auth->login('callum', 'test', true))
@@ -30,7 +30,7 @@ class HomeController extends \lynx\Core\Controller
 			}
 			else
 			{
-				echo 'failed to log in';
+				echo 'failed to log in: ' . $this->auth->error;
 			}
 		}
 		require($this->view('home_body'));

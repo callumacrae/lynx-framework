@@ -37,9 +37,9 @@ class Auth extends \lynx\Core\Plugin
 	 */
 	public function lynx_construct()
 	{
-		$this->db = $this->get_plugin('db');
-		$this->cookie = $this->get_plugin('cookies');
-		$this->hash = $this->get_plugin('hash');
+		$this->get_plugin('db');
+		$this->get_plugin('cookies');
+		$this->get_plugin('hash');
 
 		//check the session
 		if (isset($_SESSION['logged']))
@@ -108,7 +108,7 @@ class Auth extends \lynx\Core\Plugin
 
 		if (is_object($result))
 		{
-			if ($result->active !== 1)
+			if ($result->active != 1)
 			{
 				$this->error = 'Error: account not active';
 				return false;

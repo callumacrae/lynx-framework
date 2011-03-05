@@ -40,7 +40,7 @@ abstract class Plugin
 		if (!$this->config['hooks_disable'])
 		{
 			global $controller;
-			$this->hooks = $controller->hooks;
+			$this->hooks =& $controller->hooks;
 		}
 
 		if (method_exists($this, 'lynx_construct'))
@@ -56,9 +56,15 @@ abstract class Plugin
 	 *
 	 * @param string $plugin The name of the plugin to return
 	 */
-	public function get_plugin($plugin)
+	public function get_plugin($plugin, $location = false)
 	{
+		if (!$location)
+		{
+			$location = $plugin;
+		}
+
 		global $controller;
-		return $controller->load($plugin, true);
+		$this->$location =& $controller->load_plugin($plugin, false, true);
+		return true;
 	}
 }

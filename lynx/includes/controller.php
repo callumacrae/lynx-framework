@@ -19,6 +19,8 @@ if (!defined('IN_LYNX'))
 
 class Controller
 {
+	private $loaded_helpers;
+	
 	/**
 	 * Create the controller
 	 *
@@ -33,15 +35,16 @@ class Controller
 	 * Loads a plugin.
 	 *
 	 * @param string $module The module name
+	 * @param string $location The name of the variable to be loaded to (eg 'test' would be $this->test)
 	 * @param boolean $plugin Is this being called from a plugin?
 	 */
-	public function load($module, $plugin = false)
+	public function load_plugin($module, $location = false, $plugin = false)
 	{
 		if ($plugin)
 		{
 			if (!isset($this->hooks->modules[$module]))
 			{
-				$this->load($module);
+				$this->load_plugin($module);
 			}
 			return $this->$module;
 		}
@@ -72,9 +75,63 @@ class Controller
 
 		//set the module
 		$module_name = '\\lynx\\plugins\\' . $module;
-		$this->$module = new $module_name($module);
+		
+		if (!$location)
+		{
+			$location = $module;
+		}
+		$this->$location = new $module_name($module);
 
 		$this->hooks->modules[$module] = true;
+
+		return true;
+	}
+	
+	public function load_helper($helper, $location = false, $plugin = false)
+	{
+		if ($plugin)
+		{
+			if (!isset($this->loaded_helpers[$helper]))
+			{
+				$this->load_helper($helper);
+			}
+			return $this->$helper;
+		}
+		
+		//check whether helper is already loaded
+		if (isset($this->loaded_helpers[$helper]))
+		{
+			return true;
+		}
+		
+		//check whether the helper directory exists
+		$path = PATH_INDEX . '/lynx/helpers/' . $helper . '/';
+		if (!is_dir($path))
+		{
+			trigger_error('Could not find helper: directory ' . $path . ' not found', E_USER_ERROR);
+			return false;
+		}
+
+		//check whether the plugin itself exists
+		$path .= $helper . '.php';
+		if (!is_readable($path))
+		{
+			trigger_error('Could not load helper: file ' . $helper . ' not found', E_USER_ERROR);
+			return false;
+		}
+
+		require($path);
+
+		//set the module
+		$helper_name = '\\lynx\\helpers\\' . $helper;
+		
+		if (!$location)
+		{
+			$location = $helper;
+		}
+		$this->$location = new $helper_name($helper);
+
+		$this->loaded_helpers[$helper] = true;
 
 		return true;
 	}

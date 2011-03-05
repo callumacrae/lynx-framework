@@ -26,3 +26,4 @@ if ($config['hooks_enable'])
 }
 require_once('controller.php');
 require_once('plugin.php');
+require_once('helper.php');
