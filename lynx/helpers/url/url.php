@@ -54,4 +54,23 @@ class URL extends \lynx\Core\Helper
 		}
 		return $anchor;
 	}
+	
+	public function mailto($email, $text = false, $attr = false, $echo = false)
+	{
+		//convert email into ascii
+		$email_ascii = null;
+		$length = strlen($email);
+		for ($i = 0; $i < $length; $i++)
+		{
+			$email_ascii .= '&#' . ord($email[$i]) . ';';
+		}
+		$email = $email_ascii;
+
+		if (!$text)
+		{
+			$text = $email;
+		}
+		
+		return $this->create_a('&#109;&#97;&#105;&#108;&#116;&#111;&#58;' . $email, $text, $attr, $echo);
+	}
 }
