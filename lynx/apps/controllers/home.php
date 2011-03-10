@@ -23,7 +23,8 @@ class HomeController extends \lynx\Core\Controller
 		$this->load_plugin('auth');
 		$this->load_plugin('mail');
 		$this->load_helper('url');
-		echo $this->url->create_a('http://google.com/', 'google');
+		$url_helper[] = $this->url->create_a('http://google.com/', 'google');
+		$url_helper[] = $this->url->mailto('callum@example.com');
 		if (!$this->auth->logged)
 		{
 			if($this->auth->login('callum', 'test', true))
