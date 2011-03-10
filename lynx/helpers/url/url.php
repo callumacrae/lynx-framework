@@ -55,6 +55,20 @@ class URL extends \lynx\Core\Helper
 		return $anchor;
 	}
 	
+	/**
+	 * Echos or returns a mailo link. It will "obfuscate" the email address
+	 * and mailto: prefix by converting them to their ASCII counterparts,
+	 * so that most bots will not recognise them. You should not rely
+	 * on this to stop spam, and probably shouldn't use this on publicly
+	 * accessable sites - it's security through obscurity in it's least subtle
+	 * form.
+	 *
+	 * @param string $email The email address to use
+	 * @param string $text Text to display within the anchor tag. If left
+	 * 	blank, it will default to the email address (obfuscated)
+	 * @param array $attr Attributes. Can be a string or array
+	 * @param bool $echo Echo or return?
+	 */
 	public function mailto($email, $text = false, $attr = false, $echo = false)
 	{
 		//convert email into ascii
@@ -66,11 +80,6 @@ class URL extends \lynx\Core\Helper
 		}
 		$email = $email_ascii;
 
-		if (!$text)
-		{
-			$text = $email;
-		}
-		
-		return $this->create_a('&#109;&#97;&#105;&#108;&#116;&#111;&#58;' . $email, $text, $attr, $echo);
+		return $this->create_a('&#109;&#97;&#105;&#108;&#116;&#111;&#58;' . $email, ($text) ? $text : $email, $attr, $echo);
 	}
 }
