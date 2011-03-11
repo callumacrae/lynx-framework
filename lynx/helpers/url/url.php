@@ -82,4 +82,25 @@ class URL extends \lynx\Core\Helper
 
 		return $this->create_a('&#109;&#97;&#105;&#108;&#116;&#111;&#58;' . $email, ($text) ? $text : $email, $attr, $echo);
 	}
+
+	/**
+	 * Parses the string sent and automatically converts all URLs and email
+	 * addresses into anchor links.
+	 *
+	 * @param string $string The string to be parsed
+	 * @param string $type The type: url, email, or both
+	 * @param array $attr Attributes to be passed to the mailto or create_a
+	 * 	methods as they are called
+	 * @param bool $echo Echo or return?
+	 */
+	public function auto($string, $type = 'both', $attr = false, $echo = false)
+	{
+		if ($type == 'both' || $type == 'url')
+		{
+			//$regex = '/[^(<a.*)]'; //check that it isn't already a link
+			$regex .= '/(http(s?):\/\/[a-zA-Z0-9\-.]+\.[a-zA-Z]{2,3}(\/\S*)?)/'; //the url; will only convert stuff with http:// or https://
+			//$regex .= '[^(\<\/a\>)]/i'; //check that it isn't already a link
+			return preg_replace_callback($regex, create_function('$matches', 'return $this->create_a($matches[0], $attr);'), $string);
+		}
+	}
 }
