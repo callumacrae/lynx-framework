@@ -190,4 +190,18 @@ class URL extends \lynx\Core\Helper
 		}
 		return $string;
 	}
+	
+	/**
+	 * Generates a "slug" from the specified string.
+	 *
+	 * @param string $string The string to slug-ify
+	 */
+	public function slug($string)
+	{
+		$string = strtolower(trim($string));
+		$string = preg_replace('/[^a-z0-9 ]/', null, $string);
+		$string = str_replace(' ', '-', $string);
+		$string = preg_replace('/-{2,}/', '-', $string);
+		return $string;
+	}
 }
