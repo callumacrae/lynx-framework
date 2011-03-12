@@ -195,12 +195,84 @@ class URL extends \lynx\Core\Helper
 	 * Generates a "slug" from the specified string.
 	 *
 	 * @param string $string The string to slug-ify
+	 * @param bool $common Remove common words?
 	 */
-	public function slug($string)
+	public function slug($string, $common = false)
 	{
 		$string = strtolower(trim($string));
 		$string = preg_replace('/[^a-z0-9 ]/', null, $string);
-		$string = str_replace(' ', '-', $string);
+		if ($common)
+		{
+			$string = explode(' ', $string);
+			$remove = array(
+				'a', 'adj', 'ago', 'aint', 'also', 'am', 'an', 'and', 'any', 'are',
+				'arent', 'as', 'as', 'at', 'b', 'back', 'been', 'but', 'by', 'c', 'can',
+				'cannot', 'cant', 'cant', 'caption', 'cause', 'causes', 'certain',
+				'certainly', 'changes', 'clearly', 'cmon', 'co', 'co.', 'com',
+				'come', 'cs', 'd', 'darent', 'did', 'didnt', 'do', 'does', 'doesnt',
+				'done', 'dont', 'e', 'each', 'edu', 'eg', 'else', 'end', 'et', 'etc',
+				'even', 'ever', 'ex', 'f', 'far', 'few', 'for', 'from', 'g', 'get',
+				'gets', 'go', 'goes', 'got', 'h', 'had', 'hadnt', 'has', 'hasnt',
+				'have', 'havent', 'he', 'hed', 'hell', 'hello', 'help', 'here',
+				'hereafter', 'hereby', 'herein', 'heres', 'hereupon', 'hers',
+				'hes', 'hi', 'him', 'himself', 'his', 'hither', 'how', 'howbeit',
+				'however', 'i', 'id', 'ie', 'if', 'ill', 'im', 'in', 'inc', 'inc.', 'into',
+				'is', 'isnt', 'it', 'itd', 'itll', 'its', 'its', 'itself', 'ive', 'j', 'just',
+				'k', 'know', 'known', 'knows', 'l', 'latter', 'latterly', 'least',
+				'less', 'lest', 'let', 'lets', 'likely', 'likewise', 'm', 'mainly',
+				'may', 'maybe', 'maynt', 'me', 'mean', 'meantime',
+				'meanwhile', 'merely', 'might', 'mightnt', 'more',
+				'moreover', 'most', 'mostly', 'mr', 'mrs', 'much', 'must',
+				'mustnt', 'my', 'myself', 'n', 'name', 'namely', 'nd', 'near',
+				'nearly', 'neednt', 'needs', 'neither','neverf', 'neverless',
+				'nevertheless',  'no', 'nobody', 'non', 'none', 'nonetheless',
+				'noone', 'noone', 'nor', 'not', 'nothing', 'notwithstanding',
+				'now', 'nowhere', 'o', 'obviously', 'of', 'off', 'often', 'oh', 'ok',
+				'okay', 'old', 'on', 'once','ones', 'ones', 'onto', 'or', 'otherwise',
+				'ought', 'oughtnt', 'our', 'ours', 'ourselves', 'out', 'outside',
+				'over', 'overall', 'own', 'p', 'particular', 'particularly', 'past',
+				'per', 'perhaps', 'placed', 'presumably', 'probably',
+				'provided', 'provides', 'q', 'que', 'qv', 'r', 'rather', 'rd', 're',
+				'reasonably', 'right', 's', 'said', 'saw', 'say', 'saying', 'says',
+				'secondly', 'see', 'seeing', 'seem', 'seemed', 'seeming',
+				'seems', 'seen', 'self', 'selves', 'sensible', 'shall', 'shant',
+				'she', 'shed', 'shell', 'shes', 'should', 'shouldnt', 'since',
+				'so', 'some', 'somebody', 'someday', 'somehow', 'someone',
+				'something', 'sometime', 'sometimes', 'somewhat',
+				'somewhere', 'soon', 'specified', 'specify', 'specifying',
+				'still', 'sub', 'such', 'sup', 't', 'take', 'taken', 'taking', 'tell',
+				'tends', 'th', 'than', 'thank', 'thanks', 'thanx', 'that', 'thatll',
+				'thats', 'thats', 'thatve', 'the', 'their', 'theirs', 'them',
+				'themselves', 'then', 'thence', 'there', 'thereafter', 'thereby',
+				'thered', 'therefore', 'therein', 'therell', 'therere', 'theres',
+				'theres', 'thereupon', 'thereve', 'these', 'they', 'theyd', 'theyll',
+				'theyre', 'theyve', 'thing', 'things', 'think', 'this', 'thorough',
+				'thoroughly', 'those', 'though',  'through', 'throughout',
+				'thru', 'thus', 'till', 'to', 'too', 'took', 'toward', 'towards',
+				'tried', 'tries', 'truly', 'ts', 'twice', 'two', 'u', 'un', 'under',
+				'underneath', 'undoing', 'unfortunately', 'unless', 'unlike',
+				'unlikely', 'until', 'unto', 'up', 'upon', 'upwards', 'us', 'use',
+				'used', 'uses', 'using', 'usually', 'v', 'various', 'via', 'viz', 'vs',
+				'w', 'want', 'wants', 'was', 'wasnt', 'way', 'we', 'wed',
+				'welcome', 'well', 'well', 'went', 'were', 'were', 'werent',
+				'weve', 'what', 'whatever', 'whatll', 'whats', 'whatve',
+				'whence', 'whenever', 'where', 'whereafter', 'whereas',
+				'whereby', 'wherein', 'wheres', 'whereupon', 'wherever',
+				'whether', 'which', 'whichever', 'while', 'whilst', 'whither',
+				'who', 'whod', 'whoever', 'whole', 'wholl', 'whom',
+				'whomever', 'whos', 'whose', 'why', 'willing', 'with',
+				'within', 'without', 'wonder', 'wont', 'would', 'wouldnt', 'x',
+				'y', 'yes', 'yet', 'you', 'youd', 'youll', 'your', 'youre', 'yours',
+				'yourself', 'yourselves', 'youve', 'z', 'zero',
+			);
+			$string = array_diff($string, $remove);
+			unset($remove);
+			$string = implode('-', $string);
+		}
+		else
+		{
+			$string = str_replace(' ', '-', $string);
+		}
 		$string = preg_replace('/-{2,}/', '-', $string);
 		return $string;
 	}
