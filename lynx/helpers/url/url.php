@@ -95,12 +95,74 @@ class URL extends \lynx\Core\Helper
 	 */
 	public function auto($string, $type = 'both', $attr = false, $echo = false)
 	{
+		//store it so anon function can access it
+		$this->auto_attr = $attr;
+
 		if ($type == 'both' || $type == 'url')
 		{
-			//$regex = '/[^(<a.*)]'; //check that it isn't already a link
-			$regex .= '/(http(s?):\/\/[a-zA-Z0-9\-.]+\.[a-zA-Z]{2,3}(\/\S*)?)/'; //the url; will only convert stuff with http:// or https://
-			//$regex .= '[^(\<\/a\>)]/i'; //check that it isn't already a link
-			return preg_replace_callback($regex, create_function('$matches', 'return $this->create_a($matches[0], $attr);'), $string);
+			$regex = '/(?<anchor><a(?:\s+(?<attr>(?:\S+?=(?:(?:\'.*?\')|(?:".*?")\s*))+))?>(?<text>.*?)<\/a\s*>)|(?<!>)(?<url>(?<proto>https?:\/{2})(?<domain>[a-zA-Z0-9\-.]+\.[a-zA-Z]{2,3})(?<path>\/\S*)?)/i';
+			$auto = preg_replace_callback($regex, function($matches)
+			{
+				global $controller;
+
+				$attributes_string = null;
+
+				if (strlen($matches['anchor']) > 0)
+				{
+					$isset = is_object($controller->url);
+	
+					if (strlen($matches['attr']) > 0)
+					{
+						preg_match_all('/' . '(?:\S+?=(?:(?:\'.*?\')|(?:".*?")\s*))' . '/i', $matches['attr'], $attributes);
+						foreach ($attributes[0] as $attribute)
+						{
+							$attributes_split = explode('=', $attribute);
+							if ($attributes_split [0] == 'href' && !$isset)
+							{
+								$attributes_string .= ' ' . $attribute;
+							}
+							else if ($attributes_split[0] == 'href' && $isset)
+							{
+								$url = trim($attributes_split[1], '" ');
+							}
+							else if ($isset)
+							{
+								$attr[$attributes_split[0]] = trim($attributes_split[1], '"');
+							}
+						}
+					}
+					if ($isset)
+					{
+						$url_final = $controller->url->create_a($url, $matches['text'], $attr);
+					}
+					$url_final = '<a' . $attributes_string . '>' . $matches['text'] . '</a>';
+				}
+				else
+				{
+					$url =  $matches['proto'] . $matches['domain'] . $matches['path'];
+	
+					//check whether helper is called "url"
+					if (is_object($controller->url))
+					{
+						$url_final = $controller->url->create_a($url, $matches['text'], $controller->attr);
+					}
+					$url_final = '<a href="' . $url . '"' . $attributes_string . '>' . $url . '</a>';
+				}
+				
+				if ($echo)
+				{
+					echo $url_final;
+					return true;
+				}
+				return $url_final;
+			}, $string);
 		}
+		
+		if ($echo)
+		{
+			echo $auto;
+			return true;
+		}
+		return $auto;
 	}
 }

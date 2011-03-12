@@ -25,6 +25,7 @@ class HomeController extends \lynx\Core\Controller
 		$this->load_helper('url');
 		$url_helper[] = $this->url->create_a('http://google.com/', 'google');
 		$url_helper[] = $this->url->mailto('callum@example.com');
+		echo $this->url->auto('Hello world! My name is callum macrae and you can find my website at http://google.com/test/index.php');
 		if (!$this->auth->logged)
 		{
 			if($this->auth->login('callum', 'test', true))
