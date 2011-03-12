@@ -45,6 +45,12 @@ class URL extends \lynx\Core\Helper
 				$attr = $string;
 			}
 		}
+		
+		//not a valid url?! :O
+		if (!strstr($url, ':'))
+		{
+			$url = $this->config['url'] . $url;
+		}
 
 		$anchor = '<a href="' . $url . '"' . $attr . '>' . $text . '</a>';
 		if ($echo)
@@ -80,7 +86,7 @@ class URL extends \lynx\Core\Helper
 		}
 		$email = $email_ascii;
 
-		return $this->create_a('&#109;&#97;&#105;&#108;&#116;&#111;&#58;' . $email, ($text) ? $text : $email, $attr, $echo);
+		return $this->create_a('&#109;&#97;&#105;&#108;&#116;&#111;:' . $email, ($text) ? $text : $email, $attr, $echo);
 	}
 
 	/**
