@@ -101,7 +101,7 @@ class URL extends \lynx\Core\Helper
 		if ($type == 'both' || $type == 'url')
 		{
 			$regex = '/(?<anchor><a(?:\s+(?<attr>(?:\S+?=(?:(?:\'.*?\')|(?:".*?")\s*))+))?>(?<text>.*?)<\/a\s*>)|(?<!>)(?<url>(?<proto>https?:\/{2})(?<domain>[a-zA-Z0-9\-.]+\.[a-zA-Z]{2,3})(?<path>\/\S*)?)/i';
-			$auto = preg_replace_callback($regex, function($matches)
+			$string = preg_replace_callback($regex, function($matches)
 			{
 				global $controller;
 
@@ -117,6 +117,11 @@ class URL extends \lynx\Core\Helper
 						foreach ($attributes[0] as $attribute)
 						{
 							$attributes_split = explode('=', $attribute);
+							if ($attributes_split[0] == 'href' && !preg_match('/https?:\/{2}[a-z0-9\-.]+\.[a-z]/i', trim($attributes_split[1], '" ')))
+							{
+								return $matches['anchor'];
+							}
+
 							if ($attributes_split [0] == 'href' && !$isset)
 							{
 								$attributes_string .= ' ' . $attribute;
@@ -127,15 +132,15 @@ class URL extends \lynx\Core\Helper
 							}
 							else if ($isset)
 							{
-								$attr[$attributes_split[0]] = trim($attributes_split[1], '"');
+								$attr[$attributes_split[0]] = trim($attributes_split[1], '" ');
 							}
 						}
 					}
 					if ($isset)
 					{
-						$url_final = $controller->url->create_a($url, $matches['text'], $attr);
+						$url_final = $controller->url->create_a($url, $matches['text'], $controller->attr);
 					}
-					$url_final = '<a' . $attributes_string . '>' . $matches['text'] . '</a>';
+					return '<a' . $attributes_string . '>' . $matches['text'] . '</a>';
 				}
 				else
 				{
@@ -144,25 +149,45 @@ class URL extends \lynx\Core\Helper
 					//check whether helper is called "url"
 					if (is_object($controller->url))
 					{
-						$url_final = $controller->url->create_a($url, $matches['text'], $controller->attr);
+						return $controller->url->create_a($url, $matches['text'], $controller->attr);
 					}
-					$url_final = '<a href="' . $url . '"' . $attributes_string . '>' . $url . '</a>';
+					return '<a href="' . $url . '"' . $attributes_string . '>' . $url . '</a>';
 				}
-				
-				if ($echo)
+			}, $string);
+		}
+		
+		if ($type == 'both' || $type == 'email')
+		{
+			$regex = '/(?<anchor><a(?:\s+(?<attr>(?:\S+?=(?:(?:\'.*?\')|(?:".*?")\s*))+))?>(?<text>.*?)<\/a\s*>)|(?<!>)(?<email>[A-Z0-9._%+-]+@([A-Z0-9.-]+\.[A-Z]{2,4})?)/i';
+			$string = preg_replace_callback($regex, function($matches)
+			{
+				if (strlen($matches['anchor']) > 0)
 				{
-					echo $url_final;
-					return true;
+					return $matches['anchor'];
 				}
-				return $url_final;
+				global $controller;
+				if (is_object($controller->url))
+				{
+					return $controller->url->mailto($matches['email'], false, $controller->url->attr);
+				}
+				else
+				{
+					/**
+					 * It is highly recommended that you use the
+					 * mailto method, as it obfuscates the email. If
+					 * you have renamed it, either amend the above
+					 * code or don't use this function.
+					 */
+					return '<a href="mailto:' . $matches['email'] . '">' . $matches['email'] . '</a>';
+				}
 			}, $string);
 		}
 		
 		if ($echo)
 		{
-			echo $auto;
+			echo $string;
 			return true;
 		}
-		return $auto;
+		return $string;
 	}
 }
