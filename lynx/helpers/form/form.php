@@ -62,4 +62,30 @@ class Form extends \lynx\Core\Helper
 		}
 		return $form;
 	}
+	
+	/**
+	 * Generates hidden input(s)
+	 */
+	public function hidden($hidden, $echo = false)
+	{
+		if (!is_array($hidden))
+		{
+			trigger_error('Invalid input: only accepts arrays');
+			return false;
+		}
+		
+		foreach($hidden as $name => $value)
+		{
+			$form[$name] = '<input type="hidden" name="' . $name . '" value="' . $value . '" />';
+		}
+		
+		$form = implode(PHP_EOL, $form);
+		
+		if ($echo)
+		{
+			echo $form;
+			return true;
+		}
+		return $form;
+	}
 }
