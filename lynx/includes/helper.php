@@ -19,28 +19,45 @@ if (!defined('IN_LYNX'))
 
 abstract class Helper
 {
-    public $config = array();
+	public $config = array();
     
-    /**
-     * Set up the Helper
-     *
-     * @param string $helper The name of the helper, passed by the controller load_helper method
-     */
-    public function __construct($helper)
-    {
-        $path = PATH_INDEX . '/lynx/helpers/' . $helper . '/config.php';
-        if (!is_readable($path))
+	/**
+	 * Set up the Helper
+	 *
+	 * @param string $helper The name of the helper, passed by the controller load_helper method
+	 */
+	public function __construct($helper)
 	{
-	    return false;
+		$path = PATH_INDEX . '/lynx/helpers/' . $helper . '/config.php';
+		if (!is_readable($path))
+		{
+			return false;
+		}
+		include($path);
+		$this->config = new Config($config, $module);
+		
+		if (method_exists($this, 'lynx_construct'))
+		{
+			$this->lynx_construct();
+		}
+		
+		return true;
 	}
-	include($path);
-	$this->config = new Config($config, $module);
-        
-        if (method_exists($this, 'lynx_construct'))
+
+	/**
+	 * Give the helper another helper
+	 *
+	 * @param string $helper The name of the helper to return
+	 */
+	public function get_helper($helper, $location = false)
 	{
-	    $this->lynx_construct();
+		if (!$location)
+		{
+			$location = $helper;
+		}
+
+		global $controller;
+		$this->$location =& $controller->load_helper($helper, false, true);
+		return true;
 	}
-        
-        return true;
-    }
 }
