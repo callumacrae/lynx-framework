@@ -114,7 +114,8 @@ class Auth extends \lynx\Core\Plugin
 				return false;
 			}
 			
-			$result->cookie = md5(uniqid(rand(), true));
+			$this->get_helper('rand');
+			$result->cookie = $this->rand->string();
 			$this->set_session($result, $remember, true);
 			return true;
 		}
@@ -325,7 +326,8 @@ class Auth extends \lynx\Core\Plugin
 		 * Generate a random string to be used as a confirmation code or
 		 * set account as active (depends what you set in the config)
 		 */
-		$active = $this->config['email_act'] ? md5(uniqid(rand(), true)) : true;
+		$this->get_helper('rand');
+		$active = $this->config['email_act'] ? $this->rand->string() : true;
 
 		//insert them into the database
 		$this->db->insert(array(
