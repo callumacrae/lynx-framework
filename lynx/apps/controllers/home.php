@@ -23,11 +23,20 @@ class HomeController extends \lynx\Core\Controller
 		$this->load_plugin('auth');
 		$this->load_plugin('mail');
 		$this->load_helper('url');
-		$url_helper[] = $this->url->create_a('http://google.com/', 'google');
-		$url_helper[] = $this->url->create_a('/phpbb');
-		$url_helper[] = $this->url->mailto('callum@example.com');
-		$url_helper[] = $this->url->auto('Hello world! http://example.com/test/index.php callum@yahoo.com <a href="mailto:callum@lynxphp.com">example link</a>');
-		$url_helper[] = $this->url->slug('Hello world - this is a win slug!', true);
+		$this->load_helper('bbcode');
+		$bbcode = <<<EOD
+[b]Example BBCode:[/b]
+					  
+<a href="http://localhost">Example of HTML not working</a>
+[i]Italic[/i], [b]bold[/b] and [u]underlined[/u]
+[s]strikethrough and [b]inline [i]BBCode[/i][/b][/s]
+[url=http://lynxphp.com/]Link to lynxphp![/url]
+[color=red]Some coloured text[/color]
+[font=Verdana]Verdana![/font]
+[size=8]Small text :/[/size]
+[img]http://shop.fitech.co.uk/wp-content/plugins/wp-e-commerce/images/no-image-uploaded.gif[/img]
+EOD;
+		$bbcode = $this->bbcode->parse($bbcode);
 		if (!$this->auth->logged)
 		{
 			if($this->auth->login('callum', 'test', true))
