@@ -49,13 +49,9 @@ class URL extends \lynx\Core\Helper
 		//not a valid url?! :O
 		if (!strstr($url, ':'))
 		{
-			if (preg_match('/^\//', $url))
+			if (!preg_match('/^\//', $url))
 			{
-				$url = $this->config['url'] . $url;
-			}
-			else
-			{
-				$url = '';
+				$url = dirname($_SERVER['PHP_SELF']) . '/' . $url;
 			}
 		}
 
