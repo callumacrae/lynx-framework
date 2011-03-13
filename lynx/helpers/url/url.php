@@ -49,7 +49,14 @@ class URL extends \lynx\Core\Helper
 		//not a valid url?! :O
 		if (!strstr($url, ':'))
 		{
-			$url = $this->config['url'] . $url;
+			if (preg_match('/^\//', $url))
+			{
+				$url = $this->config['url'] . $url;
+			}
+			else
+			{
+				$url = '';
+			}
 		}
 
 		$anchor = '<a href="' . $url . '"' . $attr . '>' . $text . '</a>';
