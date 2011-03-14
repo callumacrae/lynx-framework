@@ -37,6 +37,9 @@ class HomeController extends \lynx\Core\Controller
 [img]http://shop.fitech.co.uk/wp-content/plugins/wp-e-commerce/images/no-image-uploaded.gif[/img]
 EOD;
 		$bbcode = $this->bbcode->parse($bbcode);
+		
+		$this->load_helper('form');
+		
 		if (!$this->auth->logged)
 		{
 			if($this->auth->login('callum', 'test', true))
