@@ -186,4 +186,20 @@ class Form extends \lynx\Core\Helper
 		}
 		return $final;
 	}
+	
+	/**
+	 * You're so lazy.
+	 *
+	 * @param bool $echo Echo or return?
+	 */
+	public function close($echo = false)
+	{
+		$close = '</form>';
+		if ($echo)
+		{
+			echo $close;
+			return true;
+		}
+		echo $close;
+	}
 }
