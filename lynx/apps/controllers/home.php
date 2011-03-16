@@ -23,7 +23,7 @@ class HomeController extends \lynx\Core\Controller
 		$this->load_plugin('auth');
 		$this->load_plugin('mail');
 		$this->load_helper('url');
-		$this->load_helper('bbcode');
+		$this->load_helper('text');
 		$bbcode = <<<EOD
 [b]Example BBCode:[/b]
 					  
@@ -36,7 +36,7 @@ class HomeController extends \lynx\Core\Controller
 [size=8]Small text :/[/size]
 [img]http://shop.fitech.co.uk/wp-content/plugins/wp-e-commerce/images/no-image-uploaded.gif[/img]
 EOD;
-		$bbcode = $this->bbcode->parse($bbcode);
+		$bbcode = $this->text->bbcode($bbcode);
 		
 		$this->load_helper('form');
 		

@@ -21,8 +21,12 @@ if (!defined('IN_LYNX'))
  * @todo Cache them!
  */
 
-class BBCode extends \lynx\Core\Helper
+class Text extends \lynx\Core\Helper
 {
+	/**
+	 * Ready the bbcode method by parsing the array defined in the config
+	 * to something regex understands
+	 */
 	public function lynx_construct()
 	{
 		$replace = array(
@@ -37,13 +41,19 @@ class BBCode extends \lynx\Core\Helper
 		
 		foreach ($this->config['codes'] as $key => $code)
 		{
-			$this->array['/' . str_replace(array_keys($replace), array_values($replace), $key) . '/i'] = $code;
+			$this->bb_array['/' . str_replace(array_keys($replace), array_values($replace), $key) . '/i'] = $code;
 		}
 	}
-	public function parse($string)
+	
+	/**
+	 * Parses any bbcode in the specified string
+	 *
+	 * @param string $string The string to parse
+	 */
+	public function bbcode($string)
 	{
 		$string = htmlspecialchars($string);
 		$string = nl2br($string);
-		return preg_replace(array_keys($this->array), array_values($this->array), $string);
+		return preg_replace(array_keys($this->bb_array), array_values($this->bb_array), $string);
 	}
 }

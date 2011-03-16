@@ -1,6 +1,7 @@
 <?php
 
 $config = array(
+	//bbcodes to use with the bbcode method
 	'codes' 	=> array(
 		'[b]{ALL}[/b]'				=> '<strong>$1</strong>',
 		'[i]{ALL}[/i]'				=> '<i>$1</i>',
