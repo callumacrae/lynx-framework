@@ -35,5 +35,11 @@
 		
 			<div style="text-align: center; margin: 0"><?php echo $this->form->input('submit'); ?></div>
 			</form>
+			
+			<br /><br /><strong>Limit demo:</strong><br /><br />
+			
+			Limit to three chars: <pre><?php echo $this->text->limit('Hello world!', 'chars', 3); ?></pre>
+			
+			Limit to one word: <pre><?php echo $this->text->limit('Hello world!', 'words', 1); ?></pre>
 
 <?php include('footer.php'); ?>

@@ -56,4 +56,80 @@ class Text extends \lynx\Core\Helper
 		$string = nl2br($string);
 		return preg_replace(array_keys($this->bb_array), array_values($this->bb_array), $string);
 	}
+	
+	/**
+	 * Returns a shortened version of the string, limited to the amount of
+	 * characters or words specified.
+	 *
+	 * @param string $string The string to shorten
+	 * @param string $type 'chars' or 'words'
+	 * @param int $limit Amount of characters or words to limit to
+	 */
+	public function limit($string, $type = false, $limit = false, $suffix = false)
+	{
+		if (!$type)
+		{
+			$type = $this->config['d_type'];
+		}
+		if (!$limit)
+		{
+			$limit = $this->config['d_limit'];
+		}
+		if (!$suffix)
+		{
+			$suffix = $this->config['d_suffix'];
+		}
+		
+		if ($type == 'chars' || $type == 'characters')
+		{
+			if (strlen($string) > $limit)
+			{
+				$string = substr($string, 0, $limit);
+				if ($suffix)
+				{
+					$string .= $suffix;
+				}
+			}
+			return $string;
+		}
+		else if ($type == 'words')
+		{
+			$words = explode(' ', $string);
+			$string = array();
+			
+			/**
+			 * The reason that we're doingn it like this instead of how the
+			 * rest of the internet does it (explode, array_splice, implode),
+			 * is that if I have twenty spaces, that would be counted as
+			 * twenty words. That wouldn't be twenty words, it would be
+			 * twenty spaces. So we're doing it like this instead :)
+			 */
+			foreach ($words as $word)
+			{
+				if ($word == null)
+				{
+					$string[] = null;
+					continue;
+				}
+				
+				if ($i++ == $limit)
+				{
+					break;
+				}
+				
+				$string[] = $word;
+			}
+			
+			$string = implode(' ', $string);
+			
+			if ($suffix)
+			{
+				$string .= $suffix;
+			}
+			return $string;
+		}
+		
+		trigger_error('Invalid type: please use either \'words\' or \'chars\'');
+		return false;
+	}
 }

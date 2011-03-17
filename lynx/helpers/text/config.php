@@ -13,4 +13,9 @@ $config = array(
 		'[font={STRING}]{ALL}[/font]'	=> '<span style="font-family: $1">$2</span>',
 		'[img]{URL}[/img]'			=> '<img src="$1" alt="$1" />',
 	),
+	
+	//defaults for the limit method
+	'd_type'		=> 'words',
+	'd_limit'		=> 20,
+	'd_suffix'		=> '...',
 );
