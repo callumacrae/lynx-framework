@@ -49,12 +49,20 @@ class Text extends \lynx\Core\Helper
 	 * Parses any bbcode in the specified string
 	 *
 	 * @param string $string The string to parse
+	 * @param bool $echo Echo or return?
 	 */
-	public function bbcode($string)
+	public function bbcode($string, $echo = false)
 	{
 		$string = htmlspecialchars($string);
 		$string = nl2br($string);
-		return preg_replace(array_keys($this->bb_array), array_values($this->bb_array), $string);
+		$string = preg_replace(array_keys($this->bb_array), array_values($this->bb_array), $string);
+		
+		if ($echo)
+		{
+			echo $string;
+			return true;
+		}
+		return $string;
 	}
 	
 	/**
@@ -64,6 +72,7 @@ class Text extends \lynx\Core\Helper
 	 * @param string $string The string to shorten
 	 * @param string $type 'chars' or 'words'
 	 * @param int $limit Amount of characters or words to limit to
+	 * @param string $suffix Suffix to append
 	 */
 	public function limit($string, $type = false, $limit = false, $suffix = false)
 	{
@@ -131,5 +140,37 @@ class Text extends \lynx\Core\Helper
 		
 		trigger_error('Invalid type: please use either \'words\' or \'chars\'');
 		return false;
+	}
+	
+	/**
+	 * Formats this string so that all text *like this* is sent back as bold
+	 * and all text _like this_ is sent back as italic
+	 *
+	 * @param string $string The string to parse
+	 * @param string $type 'both' (default), 'bold' or 'italic'
+	 * @param bool $echo Echo or return?
+	 */
+	public function format($string, $type = 'both', $echo = false)
+	{
+		if ($type !== 'italic')
+		{
+			$find[] = '/\*(.+)\*/s';
+			$replace[] = '<strong>$1</strong>';
+		}
+		
+		if ($type !== 'bold')
+		{
+			$find[] = '/_(.+)_/s';
+			$replace[] = '<i>$1</i>';
+		}
+		
+		$string = preg_replace($find, $replace, $string);
+		
+		if ($echo)
+		{
+			echo $string;
+			return true;
+		}
+		return $string;
 	}
 }
