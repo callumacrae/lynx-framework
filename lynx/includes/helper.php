@@ -34,7 +34,7 @@ abstract class Helper
 			return false;
 		}
 		include($path);
-		$this->config = new Config($config, $module);
+		$this->config = $config;
 		
 		if (method_exists($this, 'lynx_construct'))
 		{
