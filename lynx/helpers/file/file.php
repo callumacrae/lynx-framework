@@ -40,6 +40,7 @@ class File extends \lynx\Core\Helper
 			$recursive = $this->config['d_recurs'];
 		}
 		
+		//append / if not already there
 		if (!preg_match('/\/^/', $location))
 		{
 			$location .= '/';
@@ -51,6 +52,7 @@ class File extends \lynx\Core\Helper
 			return false;
 		}
 		
+		//yeah, I'm being lazy... again
 		if (!is_readable($location) || !$dir = opendir($location))
 		{
 			trigger_error('Directory ' . $location . ' could not be opened');
@@ -59,16 +61,31 @@ class File extends \lynx\Core\Helper
 		
 		while ($file = readdir($dir))
 		{
+			//ignore . and .., as it'll confuse stuff and go all infinate on me
 			if ($file == '.' || $file == '..')
 			{
 				continue;
 			}
 			
+			/**
+			 * We don't actually check whether its hidden, we check
+			 * whether it begins with a dot, which is basically the same
+			 * thing anyway.
+			 *
+			 * @todo Add windoze support for hidden files
+			 */
 			if ($hidden && preg_match('/^\./', $file))
 			{
 				continue;
 			}
 			
+			/**
+			 * The next code checks whether the file is a directory. If it is
+			 * a directory, it checks whether recursive is enabled. It then
+			 * takes one from $recursive (only if it is an int) and calls
+			 * itself to get a list of the files. If the file is not a dir in the
+			 * first place, it is just added to the array.
+			 */
 			$full_file = $location . $file;
 			if (is_dir($full_file) && ($recursive === true || $recursive > 0))
 			{
@@ -96,6 +113,9 @@ class File extends \lynx\Core\Helper
 			return false;
 		}
 
+		/**
+		 * Yeah, I know. It's just a collection of other functions.
+		 */
 		return array(
 			'basename'	=> basename($file),
 			'dirname'		=> dirname($path),
@@ -120,6 +140,10 @@ class File extends \lynx\Core\Helper
 	 */
 	function delete_files($files, $location = false)
 	{
+		/**
+		 * Anonymous function deletes whatever is sent to it - if it is sent
+		 * a directory, it will use rmdir, while it will use unlink for files.
+		 */
 		$delete = function($file)
 		{
 			if (is_file($file))
@@ -136,6 +160,7 @@ class File extends \lynx\Core\Helper
 			return false;
 		};
 		
+		//I'm lazy. So sue me.
 		if (!is_array($files))
 		{
 			$files = array($files);
@@ -147,6 +172,12 @@ class File extends \lynx\Core\Helper
 			{
 				$file = $location . $file;
 			}
+			
+			/**
+			 * If $file is a directory, cycle through deleting all the files
+			 * (or calling this function if it is a directory), or just delete
+			 * it if it is a file.
+			 */
 			if (is_dir($file))
 			{
 				$dir = $this->get_dir($file, false, true);
@@ -162,6 +193,7 @@ class File extends \lynx\Core\Helper
 						if (is_dir($file . '/' . $dir_file))
 						{
 							$this->delete_files($file . '/' . $dir_file);
+							//no continue here on purpose
 						}
 						
 						$delete($file . '/' . $dir_file);
@@ -185,35 +217,45 @@ class File extends \lynx\Core\Helper
 	 */
 	public function upload($file, $config = false)
 	{
+		//if $config is specified, merge it with config.php
 		$config = ($config) ? array_merge($this->config['upload'], $config) : $this->config['upload'];
 
+		//check whether file specified actually exists
 		if (!isset($_FILES[$file]))
 		{
 			$this->upload_error = 'File not found';
 			return false;
 		}
 		
+		//check that file uploaded successfully
 		if ($_FILES[$file]['error'] != UPLOAD_ERR_OK)
 		{
 			$this->upload_error = 'Error code: ' . $_FILES[$file]['error'];
 			return false;
 		}
 		
+		//check whether it is the right type
 		if (!preg_match('/(' . $config['types'] . ')/', $_FILES[$file]['type']))
 		{
 			$this->upload_error = 'Invalid type';
 			return false;
 		}
 		
+		//check whether it is the right size
 		if ($_FILES[$file]['size'] > $config['max_size'])
 		{
 			$this->upload_error = 'File too big';
 			return false;
 		}
 		
+		/**
+		 * In the following code, we check whether the image (if it is an
+		 * image) meets the specification (bigger than minimum height,
+		 * smaller than max etc.). This code will fail if the image is not an
+		 * image, so this functions in part as validating the image, too.
+		 */
 		if (strstr($_FILES[$file]['type'], 'image'))
 		{
-			//check height and width here
 			list($width, $height) = getimagesize($_FILES[$file]['tmp_name']);
 			if ($width > $config['max_width'])
 			{
@@ -237,34 +279,44 @@ class File extends \lynx\Core\Helper
 			}
 		}
 		
+		//this should *never* fail, but it's good to check nevertheless
 		if (!file_exists($_FILES[$file]['tmp_name']))
 		{
 			$this->upload_error = 'Temporary file not found';
 			return false;
 		}
 		
+		//if the path doesn't end in /, add one
 		if (!preg_match('/\/$/', $config['path']))
 		{
 			$config['path'] .= '/';
 		}
 		
-		if (!is_writable($config['path']))
+		//if the path isn't writable, we obviously can't put stuff there.
+		if (!is_writable($config['path']) && is_dir($config['path']))
 		{
 			$this->upload_error = 'Upload directory (' . $config['path'] . ') not writable - permissions should be set to 777';
 			return false;
 		}
 		
+		/**
+		 * The reason we explode the filename is so that if there is a file
+		 * by the same name already, we will get file2.zip, not file.zip2.
+		 * Same thing applies for random file names - we keep the
+		 * extensions.
+		 */
 		$this->get_helper('rand');
 		$name = explode('.', $_FILES[$file]['name']);
 		$name[0] = ($config['rand_name']) ? $this->rand->string() : str_replace(' ', '_', $name[0]);
 		
+		//we're probably being slightly too careful here, but no harm done
 		while (file_exists($config['path'] . implode('.', $name)) && !$config['overwrite'])
 		{
 			$name[0] .= $this->rand->num(1);
 		}
-		
 		$name = implode('.', $name);
 		
+		//move the file, and set the uploaded_data array if successful
 		if (move_uploaded_file($_FILES[$file]['tmp_name'], $config['path'] . $name))
 		{
 			$this->uploaded_data = $this->file_info($config['path'] . $name);
