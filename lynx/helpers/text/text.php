@@ -173,4 +173,53 @@ class Text extends \lynx\Core\Helper
 		}
 		return $string;
 	}
+	
+	/**
+	 * Censors the string given to it using an array defined in the config
+	 *
+	 * @param string $string The string to censor
+	 * @param bool $echo Echo or return?
+	 */
+	public function censor($string, $echo = false)
+	{
+		//very simple, but meh. May add some more stuff later
+		$string = str_ireplace(array_keys($this->config['badwords']),
+			array_values($this->config['badwords']), $string);
+		
+		if ($echo)
+		{
+			echo $string;
+			return true;
+		}
+		return $string;
+	}
+	
+	/**
+	 * Smileys! Turns :) into <img src etc.
+	 *
+	 * @param string $string The string to parse
+	 * @param string $location Location of smileys (optional)
+	 * @param bool $echo Echo or return?
+	 */
+	public function smileys($string, $location = false, $echo = false)
+	{
+		if (!$location)
+		{
+			$location = $config['smiley_location'];
+		}
+		
+		foreach ($config['smileys'] as $text => $image)
+		{
+			$smileys[$text] = '<img src="' . $location . $image . '" alt="" />';
+		}
+		
+		$string = str_replace(array_values($smileys), array_keys($smileys), $string);
+		
+		if ($echo)
+		{
+			echo $string;
+			return true;
+		}
+		return $string;
+	}
 }

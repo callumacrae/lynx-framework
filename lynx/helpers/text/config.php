@@ -18,4 +18,17 @@ $config = array(
 	'd_type'		=> 'words',
 	'd_limit'		=> 20,
 	'd_suffix'		=> '...',
+	
+	//word censor stuff
+	'badwords'	=> array(
+		'example'		=> '******',
+	),
+	
+	//default location for smileys
+	'location'	=> '/files/smileys',
+	'smileys'	=> array(
+		':)'		=> 'smile.png',
+		':('		=> 'sad.png',
+		';)'		=> 'wink.png',
+	),
 );
