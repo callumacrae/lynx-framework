@@ -64,6 +64,20 @@ class Form extends \lynx\Core\Helper
 	}
 	
 	/**
+	 * Similar to the open method, but adds a multipart
+	 *
+	 * @param string $path Path for form to point to
+	 * @param array $attr Attributes. Can also be string
+	 * @param array $hidden Array of hidden inputs
+	 * @param bool $echo Echo or return?
+	 */
+	public function open_multipart($path, $attr = false, $hidden = false, $echo = false)
+	{
+		$attr['enctype'] = 'multipart/form-data';
+		return $this->open($path, $attr, $hidden, $echo);
+	}
+	
+	/**
 	 * Generates hidden input(s)
 	 *
 	 * @param array $hidden Array of inputs

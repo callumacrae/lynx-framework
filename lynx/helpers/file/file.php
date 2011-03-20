@@ -173,6 +173,103 @@ class File extends \lynx\Core\Helper
 				$delete($file);
 			}
 		}
+	}
+	
+	/**
+	 * Uploads a file that has been sent through a form, also validates the
+	 * file and can change the name of the file.
+	 *
+	 * @param string $file The name of the input
+	 * @param array $config Values to overwrite the default config (see
+	 * 	config.php)
+	 */
+	public function upload($file, $config = false)
+	{
+		$config = ($config) ? array_merge($this->config['upload'], $config) : $this->config['upload'];
+
+		if (!isset($_FILES[$file]))
+		{
+			$this->upload_error = 'File not found';
+			return false;
+		}
 		
+		if ($_FILES[$file]['error'] != UPLOAD_ERR_OK)
+		{
+			$this->upload_error = 'Error code: ' . $_FILES[$file]['error'];
+			return false;
+		}
+		
+		if (!preg_match('/(' . $config['types'] . ')/', $_FILES[$file]['type']))
+		{
+			$this->upload_error = 'Invalid type';
+			return false;
+		}
+		
+		if ($_FILES[$file]['size'] > $config['max_size'])
+		{
+			$this->upload_error = 'File too big';
+			return false;
+		}
+		
+		if (strstr($_FILES[$file]['type'], 'image'))
+		{
+			//check height and width here
+			list($width, $height) = getimagesize($_FILES[$file]['tmp_name']);
+			if ($width > $config['max_width'])
+			{
+				$this->upload_error = 'Image too wide: maximum width ' . $config['max_width'] . 'px';
+				return false;
+			}
+			if ($width < $config['min_width'])
+			{
+				$this->upload_error = 'Image not wide enough: minimum width ' . $config['min_width'] . 'px';
+				return false;
+			}
+			if ($height > $config['max_height'])
+			{
+				$this->upload_error = 'Image too big: maximum height ' . $config['max_height'] . 'px';
+				return false;
+			}
+			if ($height < $config['min_height'])
+			{
+				$this->upload_error = 'Image too small: minimum height ' . $config['min_height'] . 'px';
+				return false;
+			}
+		}
+		
+		if (!file_exists($_FILES[$file]['tmp_name']))
+		{
+			$this->upload_error = 'Temporary file not found';
+			return false;
+		}
+		
+		if (!preg_match('/\/$/', $config['path']))
+		{
+			$config['path'] .= '/';
+		}
+		
+		if (!is_writable($config['path']))
+		{
+			$this->upload_error = 'Upload directory (' . $config['path'] . ') not writable - permissions should be set to 777';
+			return false;
+		}
+		
+		$this->get_helper('rand');
+		$name = explode('.', $_FILES[$file]['name']);
+		$name[0] = ($config['rand_name']) ? $this->rand->string() : str_replace(' ', '_', $name[0]);
+		
+		while (file_exists($config['path'] . implode('.', $name)) && !$config['overwrite'])
+		{
+			$name[0] .= $this->rand->num(1);
+		}
+		
+		$name = implode('.', $name);
+		
+		if (move_uploaded_file($_FILES[$file]['tmp_name'], $config['path'] . $name))
+		{
+			$this->uploaded_data = $this->file_info($config['path'] . $name);
+			return true;
+		}
+		return false;
 	}
 }
