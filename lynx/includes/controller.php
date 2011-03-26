@@ -26,9 +26,38 @@ class Controller
 	 *
 	 * Also sets up the hooks class
 	 */
-	public function __construct()
+	public function __construct($config)
 	{
 		$this->hooks = new Hooks;
+		$this->config = $config;
+		
+		/**
+		 * Autoloader: autloads specified helpers and plugins
+		 */
+		
+		if (!empty($config['autoload']['helpers']))
+		{
+			foreach($config['autoload']['helpers'] as $location => $helper)
+			{
+				if (is_int($location))
+				{
+					$location = false;
+				}
+				$this->load_helper($helper, $location);
+			}
+		}
+		
+		if (!empty($config['autoload']['plugins']))
+		{
+			foreach($config['autoload']['plugins'] as $location => $plugin)
+			{
+				if (is_int($location))
+				{
+					$location = false;
+				}
+				$this->load_plugin($plugin, $location);
+			}
+		}
 	}
 
 	/**
