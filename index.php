@@ -44,5 +44,5 @@ include(PATH_CONTROLLER . '/' . $path_info[1] . '.php');
 
 //set up the controller and call the correct function
 $controller = $path_info[1] . 'Controller';
-$controller = new $controller;
+$controller = new $controller($config);
 $controller->$path_info[2]();

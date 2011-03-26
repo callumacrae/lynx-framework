@@ -19,9 +19,27 @@ class HomeController extends \lynx\Core\Controller
 {
 	function index()
 	{
-		$this->load('lang');
-		$this->load('auth');
-		$this->load('mail');
+		$this->load_plugin('lang');
+		$this->load_plugin('auth');
+		$this->load_plugin('mail');
+		$this->load_helper('url');
+		$this->load_helper('text');
+		$bbcode = <<<EOD
+[b]Example BBCode:[/b]
+					  
+<a href="http://localhost">Example of HTML not working</a>
+[i]Italic[/i], [b]bold[/b] and [u]underlined[/u]
+[s]strikethrough and [b]inline [i]BBCode[/i][/b][/s]
+[url=http://lynxphp.com/]Link to lynxphp![/url]
+[color=red]Some coloured text[/color]
+[font=Verdana]Verdana![/font]
+[size=8]Small text :/[/size]
+[img]http://shop.fitech.co.uk/wp-content/plugins/wp-e-commerce/images/no-image-uploaded.gif[/img]
+EOD;
+		$bbcode = $this->text->bbcode($bbcode);
+		
+		$this->load_helper('form');
+		
 		if (!$this->auth->logged)
 		{
 			if($this->auth->login('callum', 'test', true))
@@ -30,7 +48,7 @@ class HomeController extends \lynx\Core\Controller
 			}
 			else
 			{
-				echo 'failed to log in';
+				echo 'failed to log in: ' . $this->auth->error;
 			}
 		}
 		require($this->view('home_body'));

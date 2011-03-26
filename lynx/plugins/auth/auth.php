@@ -36,9 +36,9 @@ class Auth extends \lynx\Core\Plugin
 	 */
 	public function lynx_construct()
 	{
-		$this->db = $this->get_plugin('db');
-		$this->cookie = $this->get_plugin('cookies');
-		$this->hash = $this->get_plugin('hash');
+		$this->get_plugin('db');
+		$this->get_helper('cookies');
+		$this->get_plugin('hash');
 
 		//check the session
 		if (isset($_SESSION['logged']))
@@ -107,13 +107,14 @@ class Auth extends \lynx\Core\Plugin
 
 		if (is_object($result))
 		{
-			if ($result->active !== 1)
+			if ($result->active != 1)
 			{
 				$this->error = 'Error: account not active';
 				return false;
 			}
 			
-			$result->cookie = md5(uniqid(rand(), true));
+			$this->get_helper('rand');
+			$result->cookie = $this->rand->string();
 			$this->set_session($result, $remember, true);
 			return true;
 		}
@@ -325,7 +326,8 @@ class Auth extends \lynx\Core\Plugin
 		 * Generate a random string to be used as a confirmation code or
 		 * set account as active (depends what you set in the config)
 		 */
-		$active = $this->config['email_act'] ? md5(uniqid(rand(), true)) : true;
+		$this->get_helper('rand');
+		$active = $this->config['email_act'] ? $this->rand->string() : true;
 
 		//insert them into the database
 		$this->db->insert(array(

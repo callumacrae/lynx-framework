@@ -7,7 +7,7 @@
  * @license http://creativecommons.org/licenses/by-sa/3.0/ CC by-sa
  */
  
-namespace lynx\Plugins;
+namespace lynx\Helpers;
 
 /**
  * @ignore
@@ -17,7 +17,7 @@ if (!defined('IN_LYNX'))
         exit;
 }
 
-class Cookies extends \lynx\Core\Plugin
+class Cookies extends \lynx\Core\Helper
 {
 	private $cookies = array();
 

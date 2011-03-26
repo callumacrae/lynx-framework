@@ -26,3 +26,4 @@ if ($config['hooks_enable'])
 }
 require_once(__DIR__ . '/controller.php');
 require_once(__DIR__ . '/plugin.php');
+require_once(__DIR__ . '/helper.php');
