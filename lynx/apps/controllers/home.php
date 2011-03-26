@@ -51,6 +51,6 @@ EOD;
 				echo 'failed to log in: ' . $this->auth->error;
 			}
 		}
-		require($this->view('home_body'));
+		$this->load_view('home_body');
 	}
 }
