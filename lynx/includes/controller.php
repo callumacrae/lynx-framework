@@ -80,14 +80,12 @@ class Controller
 	}
 
 	/**
-	 * Returns the path of the specified view, or errors if the view cannot
-	 * be found or read.
+	 * Loads the specified view file (from the view dir)
 	 *
-	 * @todo export($GLOBALS), we dont want this in an include
-	 *
-	 * @param string $path the name of the view file (excluding the extension)
+	 * @param string $path The name of the view file (excluding the extension)
+	 * @param mixed $data Data to be passed to the view
 	 */
-	public function view($path)
+	public function load_view($path, $data = false)
 	{
 		$path = PATH_VIEW . '/' . $path . '.php';
 		if (!is_readable($path))
@@ -95,6 +93,6 @@ class Controller
 			trigger_error('Failed to get view: could not read path ' . $path, E_USER_ERROR);
 			return false;
 		}
-		return $path;
+		include($path);
 	}
 }

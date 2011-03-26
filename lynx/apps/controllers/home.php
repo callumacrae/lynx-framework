@@ -33,6 +33,6 @@ class HomeController extends \lynx\Core\Controller
 				echo 'failed to log in';
 			}
 		}
-		require($this->view('home_body'));
+		$this->load_view('home_body');
 	}
 }
