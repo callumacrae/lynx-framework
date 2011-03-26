@@ -28,10 +28,12 @@ class Feed extends \lynx\Core\Plugin
 	 * Post to the feed.
 	 *
 	 * @param mixed $content The content of the feed entry
-	 * @param string $type The type of entry. If left blank, will default to whatever is set in config
-	 * @param int $id The ID of the user to post as. If left blank, will default to current
+	 * @param string $type The type of entry. If left blank, will default to
+	 * 	whatever is set in config
+	 * @param int $id The ID of the user to post as. If left blank, will default
+	 * 	to the ID of current user
 	 *
-	 * @todo Include some checks for stuff like profile info using forthcoming profile plugin
+	 * @todo Include some checks for stuff like profile info
 	 */
 	public function post($content, $type = false, $id = false)
 	{
@@ -40,7 +42,7 @@ class Feed extends \lynx\Core\Plugin
 		$this->db->insert(array(
 			$this->config['table']	=> array(
 				'user_id'		=> $id ? $id : $_SESSION['uid'],
-				'type'			=> $type ? $type : $this->config['d_type'],
+				'type'			=> $type ?: $this->config['d_type'],
 				'content'		=> $content,
 				'time'			=> time(),
 			),
@@ -48,19 +50,21 @@ class Feed extends \lynx\Core\Plugin
 	}
 	
 	/**
-	 * Get entries from the feed. Will return an array of objects (the last ten entries)
+	 * Get entries from the feed. Will return an array of objects
 	 *
-	 * @param string $type The type of entry. Will default to whatever is set in config
-	 * @param int $id The ID of the user to get from. Will default to current user
+	 * @param string $type The type of entry. Will default to whatever is
+	 * 	set in config if left blank
+	 * @param int $id The ID of the user to get from. Will default to the ID
+	 * 	current user if left blank
 	 */
 	public function get($type = false, $id = false, $limit = false)
 	{
 		$get = array(
 			'FROM'	=> $this->config['table'],
-			'LIMIT'	=> $limit ? $limit : $this->config['d_limit'],
+			'LIMIT'	=> $limit ?: $this->config['d_limit'],
 			'ORDER'	=> 'id DESC',
 			'WHERE'	=> array(
-				'type'	=> $type ? $type : $this->config['d_type'],
+				'type'	=> $type ?: $this->config['d_type'],
 			)
 		);
 		if ($id)
