@@ -56,6 +56,7 @@ class Feed extends \lynx\Core\Plugin
 	 * 	set in config if left blank
 	 * @param int $id The ID of the user to get from. Will default to the ID
 	 * 	current user if left blank
+	 * @param int $limit Amount of statuses to get (SQL LIMIT format)
 	 */
 	public function get($type = false, $id = false, $limit = false)
 	{
@@ -77,5 +78,20 @@ class Feed extends \lynx\Core\Plugin
 		$get = $this->db->select($get);
 		$get = $get->fetchAll(\PDO::FETCH_OBJ);
 		return $get;
+	}
+	
+	/**
+	 * Removes an entry from the feed.
+	 *
+	 * @param int $id ID of the entry to remove
+	 */
+	public function remove($id)
+	{
+		return $this->db->delete(array(
+			'FROM'	=> $this->config['table'],
+			'WHERE'	=> array(
+				'id'		=> $id,
+			),
+		));
 	}
 }
