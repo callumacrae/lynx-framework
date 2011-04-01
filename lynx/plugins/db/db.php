@@ -256,19 +256,21 @@ class Db extends \lynx\Core\Plugin
 
 		if (is_array($delete['WHERE']))
 		{
-			$i=0;
+			$i = 0;
 			foreach(array_keys($delete['WHERE']) as $value)
 			{
 				$sql .= $value . ' = ?';
-				if ($i<count($delete['WHERE'])-1) $sql .= ', ';
+				if ($i < count($delete['WHERE']) - 1)
+				{
+					$sql .= ', ';
+				}
 				$i++;
 			}
 			$values_ary = array_values($delete['WHERE']);
 
-			echo $sql . print_r($values_ary);
-			$statement = $this->db->prepare($sql);
+			$statement = $this->conn->prepare($sql);
 			$statement->execute($values_ary);
-			return $statement;
+			return ($statement->rowCount()) ? true : false;
 		}
 		$sql .= $delete['WHERE'];
 		return $this->sql($sql);
