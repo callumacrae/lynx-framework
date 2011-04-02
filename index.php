@@ -20,7 +20,8 @@ require_once('lynx/includes/includes.php');
 /**
  * If PATH_INFO isn't defined, use the defaults set in the configuration
  *
- * @todo It's buggy to do it like this - use header('Location: to send them to the right place
+ * @todo It's buggy to do it like this - use header('Location: to send them to
+ * 	the right place
  */
 if (isset($_SERVER['PATH_INFO']) && $_SERVER['PATH_INFO'] !== '/')
 {
@@ -43,5 +44,5 @@ include(PATH_CONTROLLER . '/' . $path_info[1] . '.php');
 
 //set up the controller and call the correct function
 $controller = $path_info[1] . 'Controller';
-$controller = new $controller;
+$controller = new $controller($config);
 $controller->$path_info[2]();

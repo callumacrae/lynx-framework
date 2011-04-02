@@ -47,10 +47,12 @@ class Db extends \lynx\Core\Plugin
 	 * The $select array must be as follows:
 	 *
 	 * $select = array(
-	 * 	'FROM'		=> 'The table(s) to select the data from. May be an array, where the 
-	 * 			    key is the table name and the value is the AS value.',
-	 * 	'SELECT'	=> 'The columns to select. If NULL then defaults to *',
-	 * 	'WHERE'		=> 'Recommended that you use an array - WHERE key = value',
+	 * 	'FROM'		=> 'The table(s) to select the data from. May be an
+	 * 					array, where the key is the table name and
+	 * 			    		the value is the AS value.',
+	 * 	'SELECT'		=> 'The columns to select. If NULL then defaults to *',
+	 * 	'WHERE'		=> 'It is recommended that you use an array:
+	 * 					WHERE key = value AND key = value',
 	 * 	'ORDER'		=> 'The order to select from the database',
 	 * 	'LIMIT'		=> 'The amount to limit it to (syntax: 20, 40)',
 	 * );
@@ -127,10 +129,10 @@ class Db extends \lynx\Core\Plugin
 			$columns= implode(', ', array_keys($values));
 
 			/**
-			 * The reason that we start at 1 and already have a question mark in
-			 * the string already is so that we are not required to cut stuff off
-			 * string afterwards - it would end up as ', ?, ?, ?', which is obviously
-			 * invalid.
+			 * The reason that we start at 1 and already have a question
+			 * mark in the string already is so that we are not required to
+			 * cut stuff off string afterwards - it would end up as ', ?, ?, ?',
+			 * which is obviously invalid.
 			 */
 			for ($i = 1, $q_values = '?', $count = count($values); $i < $count; $i++)
 			{
@@ -149,9 +151,9 @@ class Db extends \lynx\Core\Plugin
 	/**
 	 * Selects in individual row from the database
 	 *
-	 * It simple calls the select method and results the first row.
-	 * The syntax of the $select array should be the same as the
-	 * syntax for the select method itself.
+	 * It simple calls the select method and results the first row. The syntax
+	 * of the $select array should be the same as the syntax for the select
+	 * method itself.
 	 *
 	 * @param array $select The array to be passed to the select method
 	 */
@@ -168,13 +170,12 @@ class Db extends \lynx\Core\Plugin
 	}
 
 	/**
-	 * Updates one or more rows in the database according to the
-	 * array in the parameter. The syntax of the array should be
-	 * as follows:
+	 * Updates one or more rows in the database according to the array in
+	 * the parameter. The syntax of the array should be as follows:
 	 *
 	 * $update = array(
 	 * 	'TABLE'		=> 'The table to update',
-	 * 	'VALUES'	=> 'The columns (keys) to set as values (values)',
+	 * 	'VALUES'		=> 'The columns (keys) to set as values (values)',
 	 * 	'WHERE'		=> 'The where array, uses same syntax as select method',
 	 * );
 	 *
@@ -185,8 +186,8 @@ class Db extends \lynx\Core\Plugin
 		$sql = 'UPDATE ' . $update['TABLE'] . ' SET ';
 
 		/**
-		 * This can be a string, but is recommended that you
-		 * use an array wherever possible.
+		 * This can be a string, but is recommended that you use an array
+		 * wherever possible.
 		 */
 		if (is_array($update['VALUES']))
 		{
@@ -210,8 +211,8 @@ class Db extends \lynx\Core\Plugin
 		$sql .= ' WHERE ';
 
 		/**
-		 * Again, this can be a string, but it is recommended
-		 * that you use an array wherever possible.
+		 * Again, this can be a string, but it is recommended that you use
+		 * an array wherever possible.
 		 */
 		if (is_array($update['WHERE']))
 		{
@@ -255,19 +256,21 @@ class Db extends \lynx\Core\Plugin
 
 		if (is_array($delete['WHERE']))
 		{
-			$i=0;
+			$i = 0;
 			foreach(array_keys($delete['WHERE']) as $value)
 			{
 				$sql .= $value . ' = ?';
-				if ($i<count($delete['WHERE'])-1) $sql .= ', ';
+				if ($i < count($delete['WHERE']) - 1)
+				{
+					$sql .= ', ';
+				}
 				$i++;
 			}
 			$values_ary = array_values($delete['WHERE']);
 
-			echo $sql . print_r($values_ary);
-			$statement = $this->db->prepare($sql);
+			$statement = $this->conn->prepare($sql);
 			$statement->execute($values_ary);
-			return $statement;
+			return ($statement->rowCount()) ? true : false;
 		}
 		$sql .= $delete['WHERE'];
 		return $this->sql($sql);
@@ -284,7 +287,8 @@ class Db extends \lynx\Core\Plugin
 	public function clean($table)
 	{
 		//return false;
-		$this->sql('DELETE FROM ' . $table);
+		$clean = $this->sql('DELETE FROM ' . $table);
+		return ($clean->rowCount()) ? true : false;
 	}
 
 	/**
@@ -299,5 +303,6 @@ class Db extends \lynx\Core\Plugin
 	{
 		//return false;
 		$this->sql('DROP TABLE ' . $table);
+		return true;
 	}
 }

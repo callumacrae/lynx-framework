@@ -24,4 +24,9 @@ $config = array(
 	'd_function'	=> 'index', // default function
 	'hooks_enable'	=> true,
 	'debug'		=> true, //enable debug mode
+	
+	'autoload'		=> array(
+		'helpers'		=> array(),
+		'plugins'		=> array(),
+	),
 );

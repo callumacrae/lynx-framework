@@ -27,19 +27,18 @@ class Auth extends \lynx\Core\Plugin
 	/**
 	 * Checks whether the user is already logged in.
 	 *
-	 * First checks whether the session already exists, and validates
-	 * it against the details in the database. If this is all fine,
-	 * it sets the session (or logs the user out if the details are
-	 * incorrect)
+	 * First checks whether the session already exists, and validates it
+	 * against the details in the database. If this is all fine, it sets the
+	 * session (or logs the user out if the details are incorrect)
 	 *
-	 * If the session is not set, but the cookie is, we validate the
-	 * cookie against the database (the same as the session stuff)
+	 * If the session is not set, but the cookie is, we validate the cookie
+	 * against the database (the same as the session stuff)
 	 */
 	public function lynx_construct()
 	{
-		$this->db = $this->get_plugin('db');
-		$this->cookie = $this->get_plugin('cookies');
-		$this->hash = $this->get_plugin('hash');
+		$this->get_plugin('db');
+		$this->get_helper('cookies');
+		$this->get_plugin('hash');
 
 		//check the session
 		if (isset($_SESSION['logged']))
@@ -114,13 +113,14 @@ class Auth extends \lynx\Core\Plugin
 				return false;
 			}
 			
-			$result->cookie = md5(uniqid(rand(), true));
+			$this->get_helper('rand');
+			$result->cookie = $this->rand->string();
 			$this->set_session($result, $remember, true);
 			return true;
 		}
 		else
 		{
-			$this->failed = true;
+                        $this->failed = true;
 			$this->logout();
 			return false;
 		}
@@ -130,7 +130,8 @@ class Auth extends \lynx\Core\Plugin
 	 * set_session is a private session used by the other methods in the auth
 	 * module. It sets the session info and updates the database if required.
 	 *
-	 * @param object $result The object returned by the db class containing the user info
+	 * @param object $result The object returned by the db class containing
+	 * 	the user info
 	 * @param boolean $remember Remember the session or not?
 	 * @param boolean $init Update the database?
 	 */
@@ -167,8 +168,8 @@ class Auth extends \lynx\Core\Plugin
 	/**
 	 * Logs the user out
 	 *
-	 * It destroys the session, and updates the database. It also
-	 * unsets the cookie and $this->info.
+	 * It destroys the session, and updates the database. It also unsets the
+	 * cookie and $this->info.
 	 */
 	public function logout()
 	{
@@ -191,8 +192,8 @@ class Auth extends \lynx\Core\Plugin
 	/**
 	 * Registers a new user.
 	 *
-	 * Includes a series of checks which make sure that the user is
-	 * a user and not a bot (by checking stuff like email address)
+	 * Includes a series of checks which make sure that the user is a user
+	 * and not a bot (by checking stuff like email address)
 	 *
 	 * @param string $user The username of the account to be registered
 	 * @param string $email The email address of account to be registered
@@ -293,9 +294,9 @@ class Auth extends \lynx\Core\Plugin
 		}
 
 		/**
-		 * Checks whether email is valid (mostly). It doesn't allow IPs
-		 * or email addresses with extentions above 4 characters long,
-		 * which is basically just .museum anyway.
+		 * Checks whether email is valid (mostly). It doesn't allow IPs or
+		 * email addresses with extentions above 4 characters long, which
+		 * is basically just .museum anyway.
 		 *
 		 * The backreference in the regex is for the MX record check below.
 		 */
@@ -325,7 +326,8 @@ class Auth extends \lynx\Core\Plugin
 		 * Generate a random string to be used as a confirmation code or
 		 * set account as active (depends what you set in the config)
 		 */
-		$active = $this->config['email_act'] ? md5(uniqid(rand(), true)) : true;
+		$this->get_helper('rand');
+		$active = $this->config['email_act'] ? $this->rand->string() : true;
 
 		//insert them into the database
 		$this->db->insert(array(
@@ -379,8 +381,8 @@ class Auth extends \lynx\Core\Plugin
 	}
 
 	/**
-	 * Confirms account against confirmation code and
-	 * marks the account as actived if valid
+	 * Confirms account against confirmation code and marks the account
+	 * as actived if confirmation code is valid
 	 *
 	 * @param int $id The ID of the account to be checked
 	 * @param string $code The confirmation code to be checked
@@ -414,8 +416,8 @@ class Auth extends \lynx\Core\Plugin
 	/**
 	 * Resets the password of a user. It is recommended that you don't call
 	 * this function without confirmation - send the user an email with a
-	 * link to a page which will call this method, or it'll get abused the
-	 * hell out of.
+	 * link to a page which will call this method, or it'll get abused the hell
+	 * out of.
 	 *
 	 * @param int $id The ID of the user to have the password reset
 	 * @param string $pass The password to be reset to (opt)

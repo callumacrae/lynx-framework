@@ -17,6 +17,4 @@ if (!defined('IN_LYNX'))
 
 $config = array(
 	'd_expire'	=> 2592000, //default amount of time until the cookie expires
-
-	'hooks_disable'	=> true,
 );

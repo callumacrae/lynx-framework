@@ -33,10 +33,9 @@ class HomeController extends \lynx\Core\Controller
 			}
 			else
 			{
-				echo $this->auth->error;
-				//echo 'failed to log in';
+				echo 'failed to log in: ' . $this->auth->error;
 			}
 		}
-		require($this->view('home_body'));
+		$this->load_view('home_body');
 	}
 }

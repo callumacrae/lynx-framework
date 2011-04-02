@@ -31,9 +31,9 @@ class Lang extends \lynx\Core\Plugin
 	}
 
 	/**
-	 * Sets a different language, and attempts to load the
-	 * language file for that language. If it fails, the language
-	 * will not be loaded and there will be loads of random errors
+	 * Sets a different language, and attempts to load the language file for
+	 * that language. If it fails, the language will not be loaded and there
+	 * will be most likely be loads of random errors
 	 *
 	 * @param string $lang The language to change to
 	 */
@@ -52,9 +52,9 @@ class Lang extends \lynx\Core\Plugin
 	}
 
 	/**
-	 * Loads a language file according to $file, allowing different language files
-	 * for different things - you may not want to load a huge array into the
-	 * memory when you're only going to use a few of the values.
+	 * Loads a language file according to $file, allowing different language
+	 * files for different things - you may not want to load a huge array into
+	 * the memory when you're only going to use a few of the values.
 	 *
 	 * @param string $file The file to load from the already set language
 	 */

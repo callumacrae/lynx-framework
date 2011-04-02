@@ -21,7 +21,7 @@ if (!defined('IN_LYNX'))
  * Please don't tell me this isn't obvious.
  */
 $config = array(
-	'host'	=> 'localhost',
+	'host'	=> '127.0.0.1',
 	'port'	=> 3306,
 	'db'	=> 'lynx-framework',
 	'user'	=> 'root',
