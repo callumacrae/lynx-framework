@@ -287,7 +287,8 @@ class Db extends \lynx\Core\Plugin
 	public function clean($table)
 	{
 		//return false;
-		$this->sql('DELETE FROM ' . $table);
+		$clean = $this->sql('DELETE FROM ' . $table);
+		return ($clean->rowCount()) ? true : false;
 	}
 
 	/**
@@ -302,5 +303,6 @@ class Db extends \lynx\Core\Plugin
 	{
 		//return false;
 		$this->sql('DROP TABLE ' . $table);
+		return true;
 	}
 }
