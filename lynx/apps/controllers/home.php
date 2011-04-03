@@ -19,9 +19,11 @@ class HomeController extends \lynx\Core\Controller
 {
 	function index()
 	{
-		$this->load('lang');
-		$this->load('auth');
-		$this->load('feed');
+		$this->load_plugin('lang');
+		$this->load_plugin('auth');
+		$this->load_plugin('feed');
+		$this->load_helper('form');
+		$this->load_helper('text');
 		//$this->feed->post('test status wooo', 'status', 1);
 		//$get = $this->feed->get();
 		//print_r($get);
