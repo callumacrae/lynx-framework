@@ -19,6 +19,8 @@ if (!defined('IN_LYNX'))
 
 class Feed extends \lynx\Core\Plugin
 {
+	private $handler_data;
+	
 	public function lynx_construct()
 	{
 		$this->db = $this->get_plugin('db');
@@ -76,8 +78,15 @@ class Feed extends \lynx\Core\Plugin
 		}
 
 		$get = $this->db->select($get);
-		$get = $get->fetchAll(\PDO::FETCH_OBJ);
-		return $get;
+		while ($data = $get->fetchObject())
+		{
+			if (isset($this->handler_data[$data->type]))
+			{
+				$data = call_user_func($this->handler_data[$data->type], $data);
+			}
+			$end[] = $data;
+		}
+		return $end;
 	}
 	
 	/**
@@ -93,5 +102,24 @@ class Feed extends \lynx\Core\Plugin
 				'id'		=> $id,
 			),
 		));
+	}
+	
+	/**
+	 * Adds a handler for the get method. Any data recieved will be handled
+	 * by the specified function here. $type can be an array of multiple
+	 * callbacks, eg array($type => $data, $type => $data).
+	 *
+	 * @param string $type The type of data to handle.
+	 * @param callback $data The callback.
+	 */
+	public function add_handler($type, $data = false)
+	{
+		if ($data)
+		{
+			$type = array($type => $data);
+		}
+		
+		$this->handler_data = array_merge($this->handler_data, $type);
+		return true;
 	}
 }
