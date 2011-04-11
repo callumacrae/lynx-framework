@@ -19,7 +19,7 @@ if (!defined('IN_LYNX'))
 
 class Feed extends \lynx\Core\Plugin
 {
-	private $handler_data;
+	private $handler_data = array();
 	
 	public function lynx_construct()
 	{
