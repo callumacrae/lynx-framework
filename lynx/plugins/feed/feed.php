@@ -23,7 +23,7 @@ class Feed extends \lynx\Core\Plugin
 	
 	public function lynx_construct()
 	{
-		$this->db = $this->get_plugin('db');
+		$this->get_plugin('db');
 	}
 
 	/**
