@@ -119,6 +119,20 @@ class Feed extends \lynx\Core\Plugin
 			$type = array($type => $data);
 		}
 		
+		foreach ($type as $function)
+		{
+			if (!is_callable($function))
+			{
+				/**
+				 * If any of the functions are not callable, we're screwed
+				 * anyway - don't bother only missing that function,
+				 * just return false.
+				 */
+				trigger_error('Supplied function not callable.');
+				return false;
+			}
+		}
+		
 		$this->handler_data = array_merge($this->handler_data, $type);
 		return true;
 	}
