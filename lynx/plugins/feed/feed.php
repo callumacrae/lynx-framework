@@ -20,10 +20,12 @@ if (!defined('IN_LYNX'))
 class Feed extends \lynx\Core\Plugin
 {
 	private $handler_data = array();
+	private $handler_data_wall = array();
 	
 	public function lynx_construct()
 	{
 		$this->get_plugin('db');
+		$this->get_plugin('auth');
 	}
 
 	/**
@@ -134,6 +136,68 @@ class Feed extends \lynx\Core\Plugin
 		}
 		
 		$this->handler_data = array_merge($this->handler_data, $type);
+		return true;
+	}
+	
+	public function get_wall($type = false, $id = false, $limit = false)
+	{
+		//var_dump($this->handler_data_wall);
+		//exit;
+		$get = array(
+			'FROM'	=> $this->config['table'],
+			'LIMIT'	=> $limit ?: $this->config['d_limit'],
+			'ORDER'	=> 'id DESC',
+		);
+		
+		if ($type)
+		{
+			$get['WHERE']['type'] = $type;
+		}
+		$get['WHERE']['user_id'] = $id  ?: $this->auth->id;
+
+		$get = $this->db->select($get);
+		while ($data = $get->fetchObject())
+		{
+			if (isset($this->handler_data_wall[$data->type]))
+			{
+				$data = call_user_func($this->handler_data_wall[$data->type], $data);
+			}
+			$end[] = $data;
+		}
+		
+		return $end;
+	}
+	
+	/**
+	 * Adds a handler for the get_wall method. Any data recieved will be
+	 * handled by the specified function here. $type can be an array of
+	 * multiple callbacks, eg array($type => $data, $type => $data).
+	 *
+	 * @param string $type The type of data to handle.
+	 * @param callback $data The callback.
+	 */
+	public function add_handler_wall($type, $data = false)
+	{
+		if ($data)
+		{
+			$type = array($type => $data);
+		}
+		
+		foreach ($type as $function)
+		{
+			if (!is_callable($function))
+			{
+				/**
+				 * If any of the functions are not callable, we're screwed
+				 * anyway - don't bother only missing that function,
+				 * just return false.
+				 */
+				trigger_error('Supplied function not callable.');
+				return false;
+			}
+		}
+		
+		$this->handler_data_wall = array_merge($this->handler_data_wall, $type);
 		return true;
 	}
 }
