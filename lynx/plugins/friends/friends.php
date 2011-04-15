@@ -98,7 +98,7 @@ class Friends extends \lynx\Core\Plugin
 	 * remove the connection both ways if required and specified.
 	 *
 	 * @param int $id ID of user to remove.
-	 * @param int $id_own IF of user to remove from
+	 * @param int $id_own ID of user to remove from
 	 * @param bool $both Remove both ways?
 	 */
 	public function remove($id, $id_own = false, $both = true)
