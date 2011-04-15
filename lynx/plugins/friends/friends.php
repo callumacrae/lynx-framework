@@ -59,6 +59,23 @@ class Friends extends \lynx\Core\Plugin
 	}
 	
 	/**
+	 * Returns an array of the specified users friends, with profile information.
+	 *
+	 * @param int $id ID of the user to get friends.
+	 */
+	public function get_info($id = false)
+	{
+		$this->get_plugin('profile');
+		if (!$id && !$this->auth->logged)
+		{
+			trigger_error('User not logged in and ID not specified');
+			return false;
+		}
+		
+		return $this->profile->get_array($this->get($id));
+	}
+	
+	/**
 	 * Create a friend connection. It will listen to the configuration and
 	 * create the connection both ways if required.
 	 *
