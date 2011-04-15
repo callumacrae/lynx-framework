@@ -68,10 +68,17 @@ class Feed extends \lynx\Core\Plugin
 			'FROM'	=> $this->config['table'],
 			'LIMIT'	=> $limit ?: $this->config['d_limit'],
 			'ORDER'	=> 'id DESC',
-			'WHERE'	=> array(
-				'type'	=> $type ?: $this->config['d_type'],
-			)
 		);
+		
+		if ($type)
+		{
+			$get['WHERE']['type'] = $type;
+		}
+		else if ($this->config['d_type'])
+		{
+			$get['WHERE']['type'] = $this->config['d_type'];
+		}
+		
 		if ($id)
 		{
 			$get['WHERE'] = array_merge($get['WHERE'], array(
