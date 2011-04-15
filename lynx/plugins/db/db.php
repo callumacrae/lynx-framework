@@ -262,7 +262,7 @@ class Db extends \lynx\Core\Plugin
 				$sql .= $value . ' = ?';
 				if ($i < count($delete['WHERE']) - 1)
 				{
-					$sql .= ', ';
+					$sql .= ' AND ';
 				}
 				$i++;
 			}
