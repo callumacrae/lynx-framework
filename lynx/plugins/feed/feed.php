@@ -58,11 +58,9 @@ class Feed extends \lynx\Core\Plugin
 	 *
 	 * @param string $type The type of entry. Will default to whatever is
 	 * 	set in config if left blank
-	 * @param int $id The ID of the user to get from. Will default to the ID
-	 * 	current user if left blank
 	 * @param int $limit Amount of statuses to get (SQL LIMIT format)
 	 */
-	public function get($type = false, $id = false, $limit = false)
+	public function get_all($type = false, $limit = false)
 	{
 		$get = array(
 			'FROM'	=> $this->config['table'],
@@ -78,15 +76,64 @@ class Feed extends \lynx\Core\Plugin
 		{
 			$get['WHERE']['type'] = $this->config['d_type'];
 		}
-		
-		if ($id)
-		{
-			$get['WHERE'] = array_merge($get['WHERE'], array(
-				'user_id'	=> $id,
-			));
-		}
 
 		$get = $this->db->select($get);
+		while ($data = $get->fetchObject())
+		{
+			if (isset($this->handler_data[$data->type]))
+			{
+				$data = call_user_func($this->handler_data[$data->type], $data);
+			}
+			$end[] = $data;
+		}
+		return $end;
+	}
+	
+	/**
+	 * Get entries from the feed. Will return an array of objects
+	 *
+	 * @param string $type The type of entry. Will default to whatever is
+	 * 	set in config if left blank
+	 * @param int $id The ID of the user to get from. Will default to the ID
+	 * 	current user if left blank
+	 * @param int $limit Amount of statuses to get (SQL LIMIT format)
+	 */
+	public function get_friends($type = false, $id = false, $limit = false)
+	{
+		$this->get_plugin('friends');
+		if ($type)
+		{
+			$get['WHERE']['type'] = $type;
+		}
+		else if ($this->config['d_type'])
+		{
+			$get['WHERE']['type'] = $this->config['d_type'];
+		}
+		
+		if (!$id)
+		{
+			if (!$this->auth->logged)
+			{
+				trigger_error('User not logged in and ID not specified');
+				return false;
+			}
+			$id = $this->auth->id;
+		}
+		
+		$limit = $limit ?: $this->config['d_limit'];
+		
+		$sql = <<<SQL
+SELECT feed.*
+FROM {$this->config['table']} AS feed
+LEFT JOIN {$this->friends->config['table']} AS friends
+ON friends.user2_id = feed.user_id
+WHERE friends.user_id = $id
+OR feed.user_id = $id
+ORDER BY feed.id DESC
+LIMIT $limit
+SQL;
+
+		$get = $this->db->sql($sql);
 		while ($data = $get->fetchObject())
 		{
 			if (isset($this->handler_data[$data->type]))
